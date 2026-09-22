@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="th" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MATRIX HUNTER — ห้องฝึกรบข้อสอบเมทริกซ์ ม.5 แบบ Interactive</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              bg: '#070b14',
+              surface: '#0d1526',
+              card: '#162238',
+              border: '#2a3b5c',
+              cyan: '#06b6d4',
+              purple: '#8b5cf6',
+              amber: '#f59e0b',
+              emerald: '#10b981',
+              rose: '#f43f5e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Prompt', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #070b14;
+      color: #f1f5f9;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    
+    /* Authentic Matrix Brackets */
+    .math-matrix {
+      display: inline-block;
+      vertical-align: middle;
+      margin: 3px 6px;
+      padding: 3px 6px;
+      border-left: 2.5px solid #06b6d4;
+      border-right: 2.5px solid #06b6d4;
+      border-radius: 4px;
+      background: rgba(13, 21, 38, 0.85);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+    .math-matrix-table {
+      border-collapse: separate;
+      border-spacing: 12px 4px;
+      text-align: center;
+    }
+    .strike-killed {
+      text-decoration: line-through !important;
+      opacity: 0.38 !important;
+      filter: grayscale(85%) !important;
+      transform: scale(0.985);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    /* Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090e1a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2a3b5c;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #3b507d;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 15px rgba(6, 182, 212, 0.25); }
+      50% { box-shadow: 0 0 25px rgba(6, 182, 212, 0.55); }
+    }
+    .glow-cyan {
+      animation: pulse-glow 3s infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#070b14] text-slate-100 selection:bg-cyan-500 selection:text-black">
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-40 bg-[#0d1526]/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 shadow-lg">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-600 via-indigo-600 to-purple-600 flex items-center justify-center font-bold text-white shadow-md shadow-cyan-500/25">
+          <span class="font-mono text-xl tracking-tighter">[M]</span>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="font-bold text-lg md:text-xl tracking-wide bg-gradient-to-r from-cyan-400 via-sky-200 to-purple-400 bg-clip-text text-transparent">
+              MATRIX HUNTER
+            </h1>
+            <span class="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800/70 font-semibold">
+              PRO LAB
+            </span>
+          </div>
+          <p class="text-[11px] md:text-xs text-slate-400 hidden sm:block">
+            ฝึกมองโจทย์ → จับสมบัติ → หาทางลัด → ตัดช้อยส์ → คำนวณเท่าที่จำเป็น
+          </p>
+        </div>
+      </div>
+
+      <!-- Header Tools -->
+      <div class="flex items-center space-x-2 md:space-x-3">
+        <button onclick="toggleScratchpad()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs md:text-sm font-medium text-emerald-300 border border-emerald-900/50 flex items-center space-x-1.5 transition" title="เปิดกระดานทดเลข">
+          <span>✏️</span>
+          <span class="hidden md:inline">กระดานทด</span>
+        </button>
+        <button onclick="openFormulaVault()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs md:text-sm font-medium text-cyan-300 border border-cyan-900/50 flex items-center space-x-1.5 transition">
+          <span>📖</span>
+          <span class="hidden md:inline">Formula Vault</span>
+          <span class="md:hidden">สูตรลัด</span>
+        </button>
+        <button onclick="switchTab('weakness')" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs md:text-sm font-medium text-amber-300 border border-amber-900/50 flex items-center space-x-1.5 transition">
+          <span>⚡</span>
+          <span class="hidden md:inline">Weakness Lab</span>
+          <span class="md:hidden">จุดอ่อน</span>
+        </button>
+        <button onclick="toggleAudio()" id="audioBtn" class="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white text-sm" title="เปิด/ปิดเสียงเอฟเฟกต์">
+          🔊
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mode Selector Bar -->
+  <nav class="bg-[#090e1a] border-b border-slate-800 px-4 py-2 sticky top-[61px] z-30 overflow-x-auto">
+    <div class="max-w-7xl mx-auto flex items-center justify-between min-w-max space-x-4">
+      <div class="flex items-center space-x-2">
+        <button onclick="switchTab('practice')" id="nav-practice" class="nav-tab px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-medium transition flex items-center space-x-2 bg-cyan-600 text-white shadow-sm shadow-cyan-500/30">
+          <span>🎯</span>
+          <span>Tactical Practice (ฝึกรายข้อ)</span>
+        </button>
+        <button onclick="switchTab('mock')" id="nav-mock" class="nav-tab px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-medium transition flex items-center space-x-2 text-slate-400 hover:text-white hover:bg-slate-800">
+          <span>⏱️</span>
+          <span>Matrix Mock Exam (จำลองสอบ)</span>
+        </button>
+        <button onclick="switchTab('boss')" id="nav-boss" class="nav-tab px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-medium transition flex items-center space-x-2 text-slate-400 hover:text-white hover:bg-slate-800">
+          <span>👑</span>
+          <span>Matrix Final Boss (ด่านบอส)</span>
+        </button>
+        <button onclick="switchTab('blueprint')" id="nav-blueprint" class="nav-tab px-3.5 py-1.5 rounded-xl text-xs md:text-sm font-medium transition flex items-center space-x-2 text-slate-400 hover:text-white hover:bg-slate-800">
+          <span>🗺️</span>
+          <span>Question Blueprint (พิมพ์เขียว)</span>
+        </button>
+      </div>
+
+      <div class="text-xs font-mono text-slate-400 flex items-center space-x-3">
+        <span>คลังข้อสอบ: <strong class="text-cyan-400" id="totalQuestionsCount">110</strong> ข้อ</span>
+        <span class="text-slate-600">|</span>
+        <span>แก้แล้ว: <strong class="text-emerald-400" id="solvedCount">0</strong></span>
+        <span class="text-slate-600">|</span>
+        <span>ความแม่นยำ: <strong class="text-purple-400" id="overallAccuracy">0%</strong></span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 pb-20">
+
+    <!-- TAB 1: TACTICAL PRACTICE -->
+    <div id="tab-practice" class="tab-content space-y-6">
+      <div class="bg-[#0f172a] border border-slate-800 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-md">
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs text-slate-400">ระดับ:</span>
+            <select id="diffFilter" onchange="applyFilters()" class="bg-slate-900 border border-slate-700 text-xs md:text-sm rounded-xl px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-cyan-500">
+              <option value="all">ทั้งหมด (Level 1 - 6)</option>
+              <option value="1">Level 1 — พื้นฐาน (Basics)</option>
+              <option value="2">Level 2 — คำนวณ (Calculation)</option>
+              <option value="3">Level 3 — สมบัติ (Property)</option>
+              <option value="4">Level 4 — ประยุกต์ (Application)</option>
+              <option value="5">Level 5 — หลายสมบัติ (Multi-Concept)</option>
+              <option value="6">Level 6 — EXAM KILLER (ขั้นสูง)</option>
+            </select>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <span class="text-xs text-slate-400">หมวด:</span>
+            <select id="topicFilter" onchange="applyFilters()" class="bg-slate-900 border border-slate-700 text-xs md:text-sm rounded-xl px-2.5 py-1.5 text-slate-200 focus:outline-none focus:border-cyan-500">
+              <option value="all">ทุกหัวข้อตาม สสวท. (EP 1-9)</option>
+              <option value="Basics">Matrix Basics & Equality</option>
+              <option value="Multiplication">Matrix Multiplication & Powers</option>
+              <option value="Transpose">Transpose & Symmetry</option>
+              <option value="Determinant">Determinant & Properties</option>
+              <option value="Inverse">Inverse & Adjoint</option>
+              <option value="Linear">Linear Equations & Cramer</option>
+              <option value="Row">Row Operations & REF</option>
+              <option value="Parameter">Parameter Solving</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <button onclick="openQuestionDrawer()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-semibold flex items-center space-x-1">
+            <span>📑</span><span>ดูผังข้อสอบทั้งหมด</span>
+          </button>
+          <button onclick="prevQuestion()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold px-3 flex items-center space-x-1">
+            <span>←</span><span>ข้อก่อนหน้า</span>
+          </button>
+          <span id="questionIndexBadge" class="text-xs font-mono px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl text-cyan-400 font-bold">
+            QUESTION 01 / 110
+          </span>
+          <button onclick="nextQuestion()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold px-3 flex items-center space-x-1">
+            <span>ข้อถัดไป</span><span>→</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="practiceQuestionContainer" class="bg-[#0d1526] border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl space-y-6 relative overflow-hidden">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- TAB 2: WEAKNESS LAB -->
+    <div id="tab-weakness" class="tab-content hidden space-y-6">
+      <div class="bg-[#0d1526] border border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl space-y-6">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="text-2xl">⚡</span>
+              <h2 class="text-xl md:text-2xl font-bold text-white tracking-wide">WEAKNESS LAB (คลินิกวิเคราะห์จุดอ่อน)</h2>
+            </div>
+            <p class="text-sm text-slate-400 mt-1">
+              ระบบวิเคราะห์ข้อผิดพลาดอัตโนมัติ ติดตามว่าผู้เรียนพลาดในเรื่องใดมากที่สุด เพื่อจัดชุดโจทย์ซ่อมเฉพาะจุด
+            </p>
+          </div>
+          <button onclick="trainMyWeakness()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 flex items-center space-x-2 transition transform active:scale-95">
+            <span>🚀</span>
+            <span>TRAIN MY WEAKNESS (ฝึกซ่อมจุดอ่อน)</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="weaknessCardsGrid"></div>
+
+        <div class="bg-slate-950 border border-slate-800/80 rounded-2xl p-5 space-y-3">
+          <h3 class="text-sm font-semibold text-cyan-400 uppercase tracking-wider flex items-center space-x-2">
+            <span>💡</span>
+            <span>คำแนะนำจากระบบ AI Tutor</span>
+          </h3>
+          <p id="weaknessAdvice" class="text-sm text-slate-300 leading-relaxed"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: MATRIX MOCK EXAM -->
+    <div id="tab-mock" class="tab-content hidden space-y-6">
+      <div id="mockConfigScreen" class="bg-[#0d1526] border border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl max-w-2xl mx-auto space-y-6 text-center">
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-cyan-600 to-purple-600 mx-auto flex items-center justify-center text-3xl shadow-lg shadow-cyan-500/30">
+          ⏱️
+        </div>
+        <div>
+          <h2 class="text-2xl font-bold text-white tracking-wide">MATRIX MOCK EXAM</h2>
+          <p class="text-sm text-slate-400 mt-2 max-w-lg mx-auto">
+            สนามสอบเสมือนจริง: จับเวลาจริง ไม่มี Hint ไม่เปิดสูตร และไม่เฉลยจนกว่าจะส่งกระดาษคำตอบ เพื่อจำลองความกดดันในห้องสอบจริง
+          </p>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4 text-left max-w-md mx-auto">
+          <label class="cursor-pointer border border-slate-700 bg-slate-900/60 p-4 rounded-2xl hover:border-cyan-500 flex flex-col items-center justify-center space-y-1 transition text-center">
+            <input type="radio" name="mockLength" value="20" checked class="text-cyan-500 focus:ring-0">
+            <span class="font-bold text-lg text-white">20 ข้อ</span>
+            <span class="text-xs text-slate-400">30 นาที</span>
+          </label>
+          <label class="cursor-pointer border border-slate-700 bg-slate-900/60 p-4 rounded-2xl hover:border-cyan-500 flex flex-col items-center justify-center space-y-1 transition text-center">
+            <input type="radio" name="mockLength" value="30" class="text-cyan-500 focus:ring-0">
+            <span class="font-bold text-lg text-white">30 ข้อ</span>
+            <span class="text-xs text-slate-400">45 นาที</span>
+          </label>
+          <label class="cursor-pointer border border-slate-700 bg-slate-900/60 p-4 rounded-2xl hover:border-cyan-500 flex flex-col items-center justify-center space-y-1 transition text-center">
+            <input type="radio" name="mockLength" value="40" class="text-cyan-500 focus:ring-0">
+            <span class="font-bold text-lg text-white">40 ข้อ</span>
+            <span class="text-xs text-slate-400">60 นาที</span>
+          </label>
+        </div>
+
+        <div class="pt-4">
+          <button onclick="startMockExam()" class="w-full max-w-md px-6 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-slate-950 font-bold text-base shadow-xl shadow-cyan-500/20 transition transform active:scale-95">
+            เริ่มทำข้อสอบเสมือนจริง (START EXAM)
+          </button>
+        </div>
+      </div>
+
+      <div id="mockActiveScreen" class="hidden space-y-6">
+        <div class="bg-[#0d1526] border border-slate-800 rounded-2xl p-4 flex items-center justify-between shadow-lg">
+          <div class="flex items-center space-x-3">
+            <span class="text-xs font-mono uppercase text-slate-400">MOCK EXAM MODE</span>
+            <span class="text-slate-600">|</span>
+            <span id="mockCurrentIndex" class="font-mono text-cyan-400 font-bold text-sm">QUESTION 01 / 30</span>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2 bg-slate-950 px-3.5 py-1.5 rounded-xl border border-rose-900/50">
+              <span class="text-rose-500 animate-pulse">⏰</span>
+              <span id="mockTimerDisplay" class="font-mono text-sm md:text-base font-bold text-rose-400">30:00</span>
+            </div>
+            <button onclick="submitMockExamEarly()" class="px-4 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs md:text-sm shadow">
+              ส่งข้อสอบ
+            </button>
+          </div>
+        </div>
+
+        <div id="mockQuestionGrid" class="bg-slate-900/80 border border-slate-800 rounded-2xl p-3 flex flex-wrap gap-2 justify-center max-h-32 overflow-y-auto"></div>
+
+        <div id="mockQuestionBox" class="bg-[#0d1526] border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl space-y-6"></div>
+      </div>
+
+      <div id="mockResultScreen" class="hidden bg-[#0d1526] border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl space-y-8"></div>
+    </div>
+
+    <!-- TAB 4: MATRIX FINAL BOSS -->
+    <div id="tab-boss" class="tab-content hidden space-y-6">
+      <div class="bg-gradient-to-b from-purple-950/30 to-[#0d1526] border border-purple-900/60 rounded-3xl p-6 md:p-8 shadow-2xl space-y-6">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-purple-800/40 pb-6">
+          <div>
+            <div class="flex items-center space-x-3">
+              <span class="text-3xl">👑</span>
+              <div>
+                <h2 class="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-400 via-pink-300 to-cyan-400 bg-clip-text text-transparent">
+                  MATRIX FINAL BOSS: THE OMEGA MATRIX
+                </h2>
+                <p class="text-xs md:text-sm text-purple-300/80 mt-0.5">
+                  ด่านทดสอบความแม่นยำขั้นสุด 30 ข้อ ระดับ Level 5–6 รวบรวมโจทย์ซ้อนสมบัติ 3-5 ชั้น
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="w-full md:w-64 bg-slate-950/80 p-3 rounded-2xl border border-purple-900/50 text-right">
+            <div class="flex justify-between text-xs font-mono mb-1">
+              <span class="text-purple-300 font-bold">BOSS HP</span>
+              <span id="bossHpText" class="text-rose-400 font-bold">100%</span>
+            </div>
+            <div class="w-full h-3 bg-slate-800 rounded-full overflow-hidden">
+              <div id="bossHpBar" class="h-full bg-gradient-to-r from-rose-500 to-purple-600 transition-all duration-500" style="width: 100%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="bossQuestionArea" class="space-y-6"></div>
+      </div>
+    </div>
+
+    <!-- TAB 5: QUESTION BLUEPRINT -->
+    <div id="tab-blueprint" class="tab-content hidden space-y-6">
+      <div class="bg-[#0d1526] border border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl space-y-6">
+        <div class="border-b border-slate-800 pb-4">
+          <h2 class="text-xl font-bold text-white flex items-center space-x-2">
+            <span>🗺️</span>
+            <span>MASTER QUESTION BLUEPRINT & SENSING ENGINE</span>
+          </h2>
+          <p class="text-sm text-slate-400 mt-1">
+            พิมพ์เขียวโครงสร้างข้อสอบ 110 ข้อ ถอดรหัสรูปแบบจาก สสวท. Project 14 (9 ตอน) ร่วมกับแนวคิดลัดของ สุนทร พิมเสน
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs" id="blueprintPatternsGrid"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Interactive Scratchpad Drawer -->
+  <div id="scratchpadDrawer" class="fixed right-4 bottom-20 z-50 bg-[#0d1526] border border-cyan-800/80 rounded-3xl shadow-2xl p-4 hidden flex flex-col w-80 sm:w-96 max-h-[500px]">
+    <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
+      <div class="flex items-center space-x-2 text-cyan-300 font-bold text-sm">
+        <span>✏️</span><span>กระดานทดเลขด่วน (Scratchpad)</span>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button onclick="clearScratchpad()" class="text-[11px] text-slate-400 hover:text-rose-400 px-2 py-0.5 rounded bg-slate-800">ล้าง</button>
+        <button onclick="toggleScratchpad()" class="text-slate-400 hover:text-white text-sm">✕</button>
+      </div>
+    </div>
+    <canvas id="scratchCanvas" width="350" height="350" class="bg-slate-950 rounded-2xl border border-slate-800 cursor-crosshair touch-none w-full flex-1"></canvas>
+    <div class="text-[10px] text-slate-400 mt-2 text-center">ใช้นิ้วหรือปากกา Apple Pencil ขีดเขียนทดเลขได้ทันที</div>
+  </div>
+
+  <!-- Question List Drawer Modal -->
+  <div id="questionDrawerModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-[#0d1526] border border-slate-800 rounded-3xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+        <div class="flex items-center space-x-2">
+          <span>📑</span>
+          <h3 class="font-bold text-white text-base">ผังข้อสอบทั้งหมด (110 ข้อ)</h3>
+        </div>
+        <button onclick="closeQuestionDrawer()" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <div class="p-4 overflow-y-auto flex-1">
+        <div class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2" id="drawerQuestionsGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formula Vault Modal -->
+  <div id="formulaVaultModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-[#0d1526] border border-cyan-800/80 rounded-3xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+        <div class="flex items-center space-x-2.5">
+          <span class="text-xl">📖</span>
+          <div>
+            <h3 class="text-lg font-bold text-white">FORMULA VAULT (คลังสูตรลัดและสมบัติเมทริกซ์)</h3>
+            <p class="text-xs text-slate-400">ระบุบริบท “ใช้ตอนไหน” และ “กับดักที่ต้องระวัง”</p>
+          </div>
+        </div>
+        <button onclick="closeFormulaVault()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white">
+          ✕
+        </button>
+      </div>
+
+      <div class="p-4 bg-slate-950/60 border-b border-slate-800 flex items-center space-x-3">
+        <input type="text" id="vaultSearch" oninput="filterVault()" placeholder="พิมพ์ค้นหาสูตร เช่น det, inverse, kA, adjoint..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs md:text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500">
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4 flex-1" id="vaultCardsContainer"></div>
+    </div>
+  </div>
+
+  <!-- Kill Choices Selection Modal -->
+  <div id="killChoiceModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-[#0d1526] border border-rose-900/80 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center space-x-2 text-rose-400 font-bold text-sm">
+          <span>⚔️</span>
+          <span>เลือกเหตุผลในการตัดช้อยส์นี้</span>
+        </div>
+        <button onclick="closeKillChoiceModal()" class="text-slate-400 hover:text-white text-sm">✕</button>
+      </div>
+
+      <p class="text-xs text-slate-300">
+        ฝึกตัดช้อยส์ด้วยหลักคิดเร็ว ลดเวลาคิดคำนวณจริงได้ 2–3 เท่า!
+      </p>
+
+      <div class="space-y-2">
+        <button onclick="applyKillReason('เครื่องหมายผิด (Wrong Sign)')" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-rose-950/40 hover:border-rose-700 border border-slate-700 text-xs text-slate-200 transition">
+          🛑 เครื่องหมายผิด (Wrong Sign)
+        </button>
+        <button onclick="applyKillReason('ขนาด/มิติผิด (Wrong Dimension)')" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-rose-950/40 hover:border-rose-700 border border-slate-700 text-xs text-slate-200 transition">
+          📏 ขนาด/มิติผิด (Wrong Dimension)
+        </button>
+        <button onclick="applyKillReason('ใช้สมบัติผิด (Misapplied Property)')" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-rose-950/40 hover:border-rose-700 border border-slate-700 text-xs text-slate-200 transition">
+          ❌ ใช้สมบัติผิด (Misapplied Property)
+        </button>
+        <button onclick="applyKillReason('ลืมยกกำลัง n ใน det(kA)')" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-rose-950/40 hover:border-rose-700 border border-slate-700 text-xs text-slate-200 transition">
+          ⚡ ลืมยกกำลัง n ใน det(kA)
+        </button>
+        <button onclick="applyKillReason('det = 0 ทำให้หา inverse ไม่ได้')" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-rose-950/40 hover:border-rose-700 border border-slate-700 text-xs text-slate-200 transition">
+          🚫 det = 0 ทำให้หา inverse ไม่ได้
+        </button>
+        <button onclick="applyKillReason('ลำดับการคูณผิด (AB ≠ BA)')" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-rose-950/40 hover:border-rose-700 border border-slate-700 text-xs text-slate-200 transition">
+          🔄 ลำดับการคูณผิด (AB ≠ BA)
+        </button>
+        <button onclick="applyKillReason('ค่ามาก/น้อยเกินจริง (Out of Bound)')" class="w-full text-left px-3.5 py-2.5 rounded-xl bg-slate-900 hover:bg-rose-950/40 hover:border-rose-700 border border-slate-700 text-xs text-slate-200 transition">
+          📈 ค่ามาก/น้อยเกินจริง (Out of Bound)
+        </button>
+      </div>
+
+      <div class="pt-2 flex justify-end">
+        <button onclick="clearKillOnSelectedChoice()" class="px-3.5 py-2 rounded-xl bg-slate-800 text-xs text-slate-400 hover:text-white">
+          ยกเลิกการขีดฆ่าช้อยส์นี้
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Tone Engine -->
+  <script>
+    let audioEnabled = true;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const btn = document.getElementById('audioBtn');
+      btn.innerText = audioEnabled ? '🔊' : '🔇';
+    }
+
+    function playTone(type) {
+      if (!audioEnabled) return;
+      try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+        if (type === 'correct') {
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1);
+          osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else if (type === 'incorrect') {
+          osc.frequency.setValueAtTime(320, now);
+          osc.frequency.exponentialRampToValueAtTime(240, now + 0.15);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+          osc.start(now);
+          osc.stop(now + 0.3);
+        } else if (type === 'click') {
+          osc.frequency.setValueAtTime(440, now);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        }
+      } catch (e) {}
+    }
+  </script>
+
+  <!-- Canvas Scratchpad Engine -->
+  <script>
+    let canvas, ctx, isDrawing = false;
+
+    function initScratchpad() {
+      canvas = document.getElementById('scratchCanvas');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+      ctx.strokeStyle = '#06b6d4';
+      ctx.lineWidth = 2.5;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        return {
+          x: (clientX - rect.left) * (canvas.width / rect.width),
+          y: (clientY - rect.top) * (canvas.height / rect.height)
+        };
+      }
+
+      function startDraw(e) {
+        isDrawing = true;
+        const pos = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(pos.x, pos.y);
+      }
+
+      function draw(e) {
+        if (!isDrawing) return;
+        e.preventDefault();
+        const pos = getPos(e);
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+      }
+
+      function stopDraw() {
+        isDrawing = false;
+      }
+
+      canvas.addEventListener('mousedown', startDraw);
+      canvas.addEventListener('mousemove', draw);
+      canvas.addEventListener('mouseup', stopDraw);
+      canvas.addEventListener('mouseleave', stopDraw);
+
+      canvas.addEventListener('touchstart', startDraw, { passive: false });
+      canvas.addEventListener('touchmove', draw, { passive: false });
+      canvas.addEventListener('touchend', stopDraw);
+    }
+
+    function toggleScratchpad() {
+      const drawer = document.getElementById('scratchpadDrawer');
+      drawer.classList.toggle('hidden');
+      if (!drawer.classList.contains('hidden') && !canvas) {
+        initScratchpad();
+      }
+    }
+
+    function clearScratchpad() {
+      if (canvas && ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+  </script>
+
+  <!-- Complete Application Script -->
+  <script>
+    const QUESTION_BANK = [{"id": "MAT-BAS-001", "difficulty": 1, "topics": ["Matrix Basics"], "skills": ["Matrix Equality", "Linear Equation"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 01: Matrix equality", "question": "กำหนดให้ $A = \\begin{bmatrix} 2x-1 & 5 \\\\ 4 & y+3 \\end{bmatrix}$ และ $B = \\begin{bmatrix} 7 & 5 \\\\ 4 & -2 \\end{bmatrix}$ ถ้า $A = B$ แล้วค่าของ $x + y$ เท่ากับข้อใด?", "choices": ["-1", "0", "-2", "2"], "answer": 0, "standardSolution": "เทียบสมาชิกแต่ละตำแหน่ง:<br>1) $2x - 1 = 7 \\Rightarrow 2x = 8 \\Rightarrow x = 4$<br>2) $y + 3 = -2 \\Rightarrow y = -5$<br>ดังนั้น $x + y = 4 + (-5) = -1$", "shortcutSolution": "⚡ <b>Shortcut:</b> คิดเฉพาะตำแหน่งที่มีตัวแปร: $x = (7+1)/2 = 4$ และ $y = -2-3 = -5$ รวมได้ $-1$ ทันทีใน 5 วินาที", "concept": "การเท่ากันของเมทริกซ์: มิติต้องเท่ากันและสมาชิกตำแหน่งเดียวกัน ($a_{ij} = b_{ij}$) ต้องเท่ากันทุกตำแหน่ง", "trap": "ย้ายข้างผิดเครื่องหมาย เช่น $y+3 = -2 \\to y = 1$", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย", "สลับตัวแปร x กับ y"]}, {"id": "MAT-BAS-002", "difficulty": 1, "topics": ["Matrix Basics"], "skills": ["Dimension", "Multiplication Compatibility"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 01: Dimension", "question": "ถ้าเมทริกซ์ $A$ มีมิติ $3 \\times 2$, เมทริกซ์ $B$ มีมิติ $2 \\times 4$ และเมทริกซ์ $C$ มีมิติ $4 \\times 3$ ข้อใดต่อไปนี้<b>ไม่สามารถหาผลลัพธ์ได้</b>?", "choices": ["$AB$", "$BC$", "$CA$", "$AC$"], "answer": 3, "standardSolution": "เช็คเงื่อนไขการคูณ: หลักตัวตั้ง = แถวตัวคูณ<br>- $AB$: $(3 \\times 2)(2 \\times 4) \\to 2=2$ คูณได้ ได้ $3 \\times 4$<br>- $BC$: $(2 \\times 4)(4 \\times 3) \\to 4=4$ คูณได้ ได้ $2 \\times 3$<br>- $CA$: $(4 \\times 3)(3 \\times 2) \\to 3=3$ คูณได้ ได้ $4 \\times 2$<br>- $AC$: $(3 \\times 2)(4 \\times 3) \\to 2 \\neq 4$ คูณไม่ได้", "shortcutSolution": "⚡ <b>Shortcut:</b> เล็งมิติ $AC$: ตัวในคือ 2 กับ 4 ไม่เท่ากัน กา $AC$ ทันทีใน 3 วินาที", "concept": "เงื่อนไขการคูณเมทริกซ์: เมทริกซ์ $m \\times k$ คูณกับ $k \\times n$ ได้ผลลัพธ์ $m \\times n$", "trap": "สับสนระหว่างมิติการคูณกับมิติการบวก", "estimatedTime": 30, "hasPropertyShortcut": false, "killHints": ["สับสนมิติตัวตั้งกับตัวคูณ"]}, {"id": "MAT-BAS-003", "difficulty": 2, "topics": ["Matrix Basics", "Operations"], "skills": ["Scalar multiplication", "Equality"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 03: Scalar multiplication", "question": "กำหนดให้ $2\\begin{bmatrix} a & 3 \\\\ -1 & b \\end{bmatrix} - \\begin{bmatrix} 4 & c \\\\ d & -2 \\end{bmatrix} = \\begin{bmatrix} 6 & 2 \\\\ -5 & 8 \\end{bmatrix}$ จงหาค่าของ $a + b + c + d$", "choices": ["10", "12", "15", "18"], "answer": 2, "standardSolution": "เทียบทีละตำแหน่ง:<br>- (1,1): $2a - 4 = 6 \\Rightarrow a = 5$<br>- (1,2): $2(3) - c = 2 \\Rightarrow c = 4$<br>- (2,1): $2(-1) - d = -5 \\Rightarrow -2 - d = -5 \\Rightarrow d = 3$<br>- (2,2): $2b - (-2) = 8 \\Rightarrow 2b + 2 = 8 \\Rightarrow b = 3$<br>ผลบวก: $5 + 3 + 4 + 3 = 15$", "shortcutSolution": "⚡ <b>Shortcut:</b> หาตัวแปรทีละตัวในใจ: $a=5, c=4, d=3, b=3$ รวม $5+4+3+3=15$", "concept": "การคูณด้วยสเกลาร์ต้องคูณเข้าทุกตำแหน่ง และลบซ้อนลบเป็นบวก", "trap": "ตำแหน่ง (2,2) ลบด้วย -2 กลายเป็น +2 มักผิดเครื่องหมาย", "estimatedTime": 50, "hasPropertyShortcut": false, "killHints": ["พลาดลบซ้อนลบ"]}, {"id": "MAT-BAS-004", "difficulty": 1, "topics": ["Matrix Operations"], "skills": ["Matrix Addition", "Partial calculation"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 02: Matrix addition", "question": "ให้ $A = \\begin{bmatrix} 3 & -2 \\\\ 0 & 4 \\end{bmatrix}$ และ $B = \\begin{bmatrix} -1 & 5 \\\\ 2 & -3 \\end{bmatrix}$ ถ้า $A + 2X = B$ แล้วสมาชิกในแถวที่ 1 หลักที่ 2 ($x_{12}$) ของเมทริกซ์ $X$ คือข้อใด?", "choices": ["3.5", "7", "-3.5", "-7"], "answer": 0, "standardSolution": "ดูเฉพาะตำแหน่ง (1,2):<br>$a_{12} + 2x_{12} = b_{12} \\Rightarrow -2 + 2x_{12} = 5 \\Rightarrow 2x_{12} = 7 \\Rightarrow x_{12} = 3.5$", "shortcutSolution": "⚡ <b>Shortcut:</b> ชี้เป้าตำแหน่งเดียว: $-2 + 2x = 5 \\to 2x = 7 \\to x = 3.5$ ไม่ต้องหาเมทริกซ์เต็มแผง!", "concept": "การดำเนินการเมทริกซ์คิดแยกแต่ละตำแหน่งได้อิสระ", "trap": "คำนวณครบ 4 ตำแหน่งจนเสียเวลา หรือลืมหาร 2", "estimatedTime": 35, "hasPropertyShortcut": true, "killHints": ["ลืมหาร 2", "คำนวณทั้งเมทริกซ์"]}, {"id": "MAT-BAS-005", "difficulty": 2, "topics": ["Matrix Basics"], "skills": ["Identity Matrix", "Trace"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 01: Identity", "question": "ถ้า $I_3$ คือเมทริกซ์เอกลักษณ์มิติ $3 \\times 3$ และ $O_3$ คือเมทริกซ์ศูนย์มิติ $3 \\times 3$ ผลบวกของสมาชิกทั้งหมดในเมทริกซ์ $3I_3 - 2O_3$ เท่ากับเท่าใด?", "choices": ["3", "6", "9", "27"], "answer": 2, "standardSolution": "$I_3$ มีเลข 1 อยู่ 3 ตัวบนเส้นทแยงมุมหลัก นอกนั้นเป็น 0<br>เมื่อคูณ 3 จะมีเลข 3 อยู่ 3 ตัว ผลรวมคือ $3 + 3 + 3 = 9$", "shortcutSolution": "⚡ <b>Shortcut:</b> $I_3$ มีเลข 1 สามตัว $\\to 3 \\times 3 = 9$ ใน 2 วินาที", "concept": "นิยามเมทริกซ์เอกลักษณ์ $I_n$", "trap": "คิดว่าทุกสมาชิกกลายเป็น 3 ($3 \\times 9 = 27$)", "estimatedTime": 30, "hasPropertyShortcut": false, "killHints": ["คิดว่ามีเลข 3 ทั้ง 9 ช่อง"]}, {"id": "MAT-BAS-006", "difficulty": 2, "topics": ["Matrix Basics"], "skills": ["Matrix Elements Formula"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 01: Element formula", "question": "กำหนดให้เมทริกซ์ $A = [a_{ij}]_{2 \\times 3}$ โดยที่ $a_{ij} = 2i - j$ ผลบวกของสมาชิกทั้งหมดในแถวที่ 2 ของเมทริกซ์ $A$ มีค่าเท่ากับเท่าใด?", "choices": ["3", "6", "9", "12"], "answer": 1, "standardSolution": "แถวที่ 2 หมายถึง $i = 2$ สำหรับ $j = 1, 2, 3$:<br>- $a_{21} = 2(2) - 1 = 3$<br>- $a_{22} = 2(2) - 2 = 2$<br>- $a_{23} = 2(2) - 3 = 1$<br>ผลบวก = $3 + 2 + 1 = 6$", "shortcutSolution": "⚡ <b>Shortcut:</b> แถว 2 คือ $i=2$: ค่าเฉลี่ย $a_{22} = 4-2=2$ มี 3 ตัว $\\to 2 \\times 3 = 6$ ทันที", "concept": "การสร้างสมาชิกเมทริกซ์จากสูตร $a_{ij}$", "trap": "สับสนระหว่าง $i$ (แถว) กับ $j$ (หลัก)", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["สับสนลำดับ i กับ j"]}, {"id": "MAT-BAS-007", "difficulty": 2, "topics": ["Matrix Basics"], "skills": ["Matrix Equality", "System"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 01: Matrix equality", "question": "กำหนดให้ $\\begin{bmatrix} x+y & 4 \\\\ -1 & x-y \\end{bmatrix} = \\begin{bmatrix} 8 & 4 \\\\ -1 & 2 \\end{bmatrix}$ ค่าของ $xy$ เท่ากับเท่าใด?", "choices": ["10", "15", "12", "16"], "answer": 1, "standardSolution": "เทียบตำแหน่ง (1,1) และ (2,2):<br>$x + y = 8$ และ $x - y = 2$<br>บวกกันได้ $2x = 10 \\Rightarrow x = 5$ และ $y = 3$<br>ดังนั้น $xy = (5)(3) = 15$", "shortcutSolution": "⚡ <b>Shortcut:</b> $xy = \\frac{(x+y)^2 - (x-y)^2}{4} = \\frac{64 - 4}{4} = 15$ เร็วมาก!", "concept": "การเทียบความเท่ากันของเมทริกซ์ร่วมกับสมการเชิงเส้น", "trap": "คิดเลขเร็วเกินจนสลับค่า $x$ และ $y$", "estimatedTime": 40, "hasPropertyShortcut": true, "killHints": ["คิดเลขสับสน"]}, {"id": "MAT-BAS-008", "difficulty": 2, "topics": ["Matrix Operations"], "skills": ["Matrix Subtraction", "Partial"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 02: Scalar subtraction", "question": "ถ้า $3A - 2B = \\begin{bmatrix} 4 & 1 \\\\ -2 & 5 \\end{bmatrix}$ และ $A - B = \\begin{bmatrix} 1 & 0 \\\\ -1 & 2 \\end{bmatrix}$ สมาชิกตำแหน่ง (2,2) ของเมทริกซ์ $A$ คือข้อใด?", "choices": ["1", "2", "3", "-1"], "answer": 0, "standardSolution": "จัดสมการ: $A = (3A - 2B) - 2(A - B)$<br>ตำแหน่ง (2,2): $a_{22} = 5 - 2(2) = 5 - 4 = 1$", "shortcutSolution": "⚡ <b>Shortcut:</b> รวมสมการก่อน: $A = (3A-2B) - 2(A-B)$ แล้วดึงเฉพาะตำแหน่ง (2,2) มาคิด: $5 - 2(2) = 1$ จบ!", "concept": "การแก้สมการเมทริกซ์ด้วยการกำจัดตัวแปร", "trap": "ไปหาเมทริกซ์เต็มแผงทั้ง $A$ และ $B$", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["คำนวณเต็มระบบทั้ง 4 สมาชิก"]}, {"id": "MAT-BAS-009", "difficulty": 1, "topics": ["Matrix Basics"], "skills": ["Zero Matrix", "Additive Inverse"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 02: Additive inverse", "question": "ตัวผกผันการบวก (Additive Inverse) ของเมทริกซ์ $A = \\begin{bmatrix} -3 & 7 \\\\ 0 & -4 \\end{bmatrix}$ คือเมทริกซ์ในข้อใด?", "choices": ["$\\begin{bmatrix} 3 & -7 \\\\ 0 & 4 \\end{bmatrix}$", "$\\begin{bmatrix} -4 & -7 \\\\ 0 & -3 \\end{bmatrix}$", "$\\begin{bmatrix} -3 & 0 \\\\ 7 & -4 \\end{bmatrix}$", "$\\begin{bmatrix} 1/3 & -1/7 \\\\ 0 & 1/4 \\end{bmatrix}$"], "answer": 0, "standardSolution": "ตัวผกผันการบวกของ $A$ คือ $-A$:<br>$-A = -\\begin{bmatrix} -3 & 7 \\\\ 0 & -4 \\end{bmatrix} = \\begin{bmatrix} 3 & -7 \\\\ 0 & 4 \\end{bmatrix}$", "shortcutSolution": "⚡ <b>Shortcut:</b> ตัวผกผันการบวกคือ 'เปลี่ยนเครื่องหมายเป็นตรงข้ามทุกตัว' ตอบข้อ A ทันที", "concept": "นิยามตัวผกผันการบวก: $A + (-A) = \\mathbf{0}$", "trap": "สับสนกับตัวผกผันการคูณ (Inverse) หรือเอาไปกลับเศษส่วน (ช้อยส์ D)", "estimatedTime": 30, "hasPropertyShortcut": false, "killHints": ["สับสนกับอินเวิร์สการคูณ"]}, {"id": "MAT-BAS-010", "difficulty": 2, "topics": ["Matrix Basics"], "skills": ["Diagonal Matrix", "Scalar Matrix"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 01: Special Matrices", "question": "เมทริกซ์จัตุรัสที่มีสมาชิกบนเส้นทแยงมุมหลักเท่ากันทุกตัวและสมาชิกตำแหน่งอื่นเป็นศูนย์ทั้งหมด เรียกว่าเมทริกซ์ชนิดใด?", "choices": ["เมทริกซ์สเกลาร์ (Scalar Matrix)", "เมทริกซ์ทแยงมุม (Diagonal Matrix)", "เมทริกซ์ศูนย์ (Zero Matrix)", "เมทริกซ์สมมาตร (Symmetric Matrix)"], "answer": 0, "standardSolution": "นิยาม: เมทริกซ์ทแยงมุมที่มีสมาชิกบนเส้นทแยงมุมหลักเป็นค่าคงที่เท่ากันทุกตัว เรียกว่า 'เมทริกซ์สเกลาร์ (Scalar Matrix)' เช่น $cI$", "shortcutSolution": "⚡ <b>Shortcut:</b> ทแยงมุมเท่ากันทุกตัว = Scalar Matrix (ถ้าเท่ากับ 1 คือ Identity, ถ้าเป็นศูนย์หมดคือ Zero)", "concept": "การจำแนกชนิดเมทริกซ์พิเศษตามหลักสูตร สสวท.", "trap": "ตอบเมทริกซ์ทแยงมุมซึ่งเป็นเซตที่กว้างกว่า", "estimatedTime": 30, "hasPropertyShortcut": false, "killHints": ["สับสนนิยามเฉพาะ"]}, {"id": "MAT-MUL-011", "difficulty": 2, "topics": ["Matrix Multiplication"], "skills": ["Row by Column", "Partial Computation"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 04: Matrix multiplication", "question": "กำหนด $A = \\begin{bmatrix} 1 & 2 \\\\ 3 & 4 \\end{bmatrix}$ และ $B = \\begin{bmatrix} 0 & 1 \\\\ -2 & 3 \\end{bmatrix}$ สมาชิกในแถวที่ 2 หลักที่ 1 ของเมทริกซ์ $AB$ คือข้อใด?", "choices": ["-8", "-4", "-6", "2"], "answer": 0, "standardSolution": "ตำแหน่ง $(AB)_{21} = (\\text{แถว 2 ของ } A) \\cdot (\\text{หลัก 1 ของ } B) = (3)(0) + (4)(-2) = 0 - 8 = -8$", "shortcutSolution": "⚡ <b>Shortcut:</b> เล็งแถว 2 ชนหลัก 1: $3(0) + 4(-2) = -8$ ใน 5 วินาที", "concept": "การคูณเมทริกซ์: แถวหน้า $\\times$ หลักหลัง", "trap": "คูณสลับหลัก หรือเอาหลักคูณแถว", "estimatedTime": 35, "hasPropertyShortcut": true, "killHints": ["คำนวณทั้งเมทริกซ์"]}, {"id": "MAT-MUL-012", "difficulty": 3, "topics": ["Matrix Multiplication"], "skills": ["Non-commutativity", "Exam trap"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 04: Non-commutativity", "question": "ข้อความใดต่อไปนี้<b>ถูกต้อง</b>สำหรับเมทริกซ์จัตุรัส $A$ และ $B$ มิติ $n \\times n$ ใดๆ?", "choices": ["$(A + B)^2 = A^2 + 2AB + B^2$ เสมอ", "$(A - B)(A + B) = A^2 - B^2$ เสมอ", "$(AB)^T = A^T B^T$ เสมอ", "$(AB)^T = B^T A^T$ เสมอ"], "answer": 3, "standardSolution": "โดยทั่วไป $AB \\neq BA$ ทำให้ $(A+B)^2 = A^2+AB+BA+B^2 \\neq A^2+2AB+B^2$ และ $(A-B)(A+B) = A^2+AB-BA-B^2 \\neq A^2-B^2$<br>และสมบัติ Transpose ของผลคูณต้องสลับลำดับคือ $(AB)^T = B^T A^T$", "shortcutSolution": "⚡ <b>Shortcut:</b> กฎเหล็ก: 'ไม่มีสลับที่การคูณ' และ Transpose ผลคูณต้องสลับหลังมาหน้า ตอบข้อ D", "concept": "สมบัติการไม่สลับที่ของการคูณเมทริกซ์", "trap": "จำสูตรพีชคณิต ม.ต้น มาใช้ตรงๆ", "estimatedTime": 40, "hasPropertyShortcut": true, "killHints": ["จำสูตรพีชคณิตจำนวนจริงมาใช้"]}, {"id": "MAT-MUL-013", "difficulty": 2, "topics": ["Matrix Multiplication"], "skills": ["Powers of Matrix", "Pattern"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 04: Powers of Matrix", "question": "กำหนดให้ $A = \\begin{bmatrix} 1 & 2 \\\\ 0 & 1 \\end{bmatrix}$ จงหาเมทริกซ์ $A^5$", "choices": ["$\\begin{bmatrix} 1 & 10 \\\\ 0 & 1 \\end{bmatrix}$", "$\\begin{bmatrix} 1 & 32 \\\\ 0 & 1 \\end{bmatrix}$", "$\\begin{bmatrix} 5 & 10 \\\\ 0 & 5 \\end{bmatrix}$", "$\\begin{bmatrix} 1 & 64 \\\\ 0 & 1 \\end{bmatrix}$"], "answer": 0, "standardSolution": "สังเกตรูปแบบ: $A^2 = \\begin{bmatrix} 1 & 4 \\\\ 0 & 1 \\end{bmatrix}, A^3 = \\begin{bmatrix} 1 & 6 \\\\ 0 & 1 \\end{bmatrix}$<br>แบบรูปคือ $A^n = \\begin{bmatrix} 1 & 2n \\\\ 0 & 1 \\end{bmatrix}$ ดังนั้น $A^5 = \\begin{bmatrix} 1 & 10 \\\\ 0 & 1 \\end{bmatrix}$", "shortcutSolution": "⚡ <b>Shortcut:</b> สำหรับรูป $\\begin{bmatrix} 1 & k \\\\ 0 & 1 \\end{bmatrix}^n = \\begin{bmatrix} 1 & nk \\\\ 0 & 1 \\end{bmatrix}$ ตำแหน่งขวาบนคือ $5 \\times 2 = 10$", "concept": "การยกกำลังเมทริกซ์แบบมีแบบรูป (Jordan Block)", "trap": "เอาเลข 2 ไปยกกำลัง 5 ได้ 32", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["เอาสมาชิกยกกำลังตรงๆ"]}, {"id": "MAT-MUL-014", "difficulty": 3, "topics": ["Matrix Multiplication"], "skills": ["Commuting Matrices", "AB = BA"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 04: Commuting", "question": "ถ้า $A = \\begin{bmatrix} 1 & 2 \\\\ 0 & 1 \\end{bmatrix}$ และ $B = \\begin{bmatrix} a & b \\\\ 0 & c \\end{bmatrix}$ โดยที่ $AB = BA$ ข้อใดคือเงื่อนไขที่ถูกต้องเสมอ?", "choices": ["$a = c$", "$b = 2$", "$a = 2b$", "$c = 0$"], "answer": 0, "standardSolution": "คำนวณ $AB$ และ $BA$:<br>$AB = \\begin{bmatrix} 1 & 2 \\\\ 0 & 1 \\end{bmatrix}\\begin{bmatrix} a & b \\\\ 0 & c \\end{bmatrix} = \\begin{bmatrix} a & b+2c \\\\ 0 & c \\end{bmatrix}$<br>$BA = \\begin{bmatrix} a & b \\\\ 0 & c \\end{bmatrix}\\begin{bmatrix} 1 & 2 \\\\ 0 & 1 \\end{bmatrix} = \\begin{bmatrix} a & 2a+b \\\\ 0 & c \\end{bmatrix}$<br>เทียบตำแหน่ง (1,2): $b + 2c = 2a + b \\Rightarrow 2c = 2a \\Rightarrow a = c$", "shortcutSolution": "⚡ <b>Shortcut:</b> เทียบตำแหน่ง (1,2) อย่างเดียว: $b+2c = 2a+b \\Rightarrow 2c = 2a \\Rightarrow a = c$ ตัดช้อยส์อื่นหมด!", "concept": "เงื่อนไขการสลับที่การคูณของเมทริกซ์ $AB = BA$", "trap": "คิดว่า $B$ ต้องเป็น $I$ หรือตัวแปรต้องเป็น 0", "estimatedTime": 55, "hasPropertyShortcut": true, "killHints": ["เทียบสมาชิกทุกตำแหน่งจนสับสน"]}, {"id": "MAT-TRA-015", "difficulty": 2, "topics": ["Transpose"], "skills": ["Transpose Properties"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 05: Transpose", "question": "กำหนดให้ $A$ มีมิติ $2 \\times 3$ และ $B$ มีมิติ $3 \\times 2$ ข้อใดต่อไปนี้มีมิติเท่ากับ $2 \\times 2$?", "choices": ["$A^T B^T$", "$B^T A$", "$A B$", "$B A$"], "answer": 2, "standardSolution": "$A$ มีมิติ $2 \\times 3$ และ $B$ มีมิติ $3 \\times 2$<br>- $AB$: $(2 \\times 3)(3 \\times 2) = 2 \\times 2$ (ถูกต้อง!)<br>- $BA$: $(3 \\times 2)(2 \\times 3) = 3 \\times 3$", "shortcutSolution": "⚡ <b>Shortcut:</b> ดูหัวท้าย $A_{2 \\times 3} \\times B_{3 \\times 2} \\to 2 \\times 2$ ทันที", "concept": "มิติของผลคูณเมทริกซ์", "trap": "สับสนระหว่าง $AB$ ($2 \\times 2$) กับ $BA$ ($3 \\times 3$)", "estimatedTime": 30, "hasPropertyShortcut": false, "killHints": ["สลับลำดับผลคูณ"]}, {"id": "MAT-TRA-016", "difficulty": 3, "topics": ["Transpose"], "skills": ["Symmetric Matrix", "Skew-Symmetric"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 05: Symmetric", "question": "ถ้า $A$ เป็นเมทริกซ์จัตุรัสใดๆ แล้ว เมทริกซ์ $B = A - A^T$ เป็นเมทริกซ์ชนิดใดเสมอ?", "choices": ["เมทริกซ์สมมาตร", "เมทริกซ์ปฏิสมมาตร", "เมทริกซ์เอกลักษณ์", "เมทริกซ์ศูนย์"], "answer": 1, "standardSolution": "Take transpose: $B^T = (A - A^T)^T = A^T - (A^T)^T = A^T - A = -(A - A^T) = -B$<br>เนื่องจาก $B^T = -B$ จึงเป็นเมทริกซ์ปฏิสมมาตรเสมอ", "shortcutSolution": "⚡ <b>Shortcut:</b> $A+A^T$ สมมาตรเสมอ, $A-A^T$ ปฏิสมมาตรเสมอ จำเข้าห้องสอบตอบใน 2 วินาที!", "concept": "นิยามเมทริกซ์สมมาตร ($M^T=M$) และปฏิสมมาตร ($M^T=-M$)", "trap": "คิดว่า $A - A^T = 0$", "estimatedTime": 35, "hasPropertyShortcut": true, "killHints": ["คิดว่าลบกันหมด"]}, {"id": "MAT-TRA-017", "difficulty": 3, "topics": ["Transpose", "Operations"], "skills": ["Partial row of transpose product"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 06: Transpose + mult", "question": "ถ้า $A = \\begin{bmatrix} 2 & 1 \\\\ -1 & 3 \\end{bmatrix}$ และ $B = \\begin{bmatrix} 1 & 0 \\\\ 4 & 2 \\end{bmatrix}$ แถวที่ 1 ของ $(AB)^T$ คือข้อใด?", "choices": ["$\\begin{bmatrix} 6 & 11 \\end{bmatrix}$", "$\\begin{bmatrix} 2 & 6 \\end{bmatrix}$", "$\\begin{bmatrix} 2 & 11 \\end{bmatrix}$", "$\\begin{bmatrix} 6 & 2 \\end{bmatrix}$"], "answer": 0, "standardSolution": "แถวที่ 1 ของ $(AB)^T$ คือ 'หลักที่ 1 ของ $AB$'<br>หลัก 1 ของ $AB$ เกิดจาก $A \\times \\begin{bmatrix} 1 \\\\ 4 \\end{bmatrix}$:<br>$(2)(1) + (1)(4) = 6$<br>$(-1)(1) + (3)(4) = 11$<br>ดังนั้นได้ $\\begin{bmatrix} 6 \\\\ 11 \\end{bmatrix}$ เมื่อทรานสโพสจะกลายเป็นแถว $\\begin{bmatrix} 6 & 11 \\end{bmatrix}$", "shortcutSolution": "⚡ <b>Shortcut:</b> แถว 1 ของ $(AB)^T$ = หลัก 1 ของ $AB$ = $A \\times [1, 4]^T = [2(1)+1(4), -1(1)+3(4)]^T = [6, 11]^T$ เขียนเป็นแถวได้ $[6, 11]$ ตอบข้อ A", "concept": "ความสัมพันธ์ระหว่างแถวของเมทริกซ์ทรานสโพสกับหลักของเมทริกซ์เดิม", "trap": "ไปหาผลคูณ $AB$ ทั้ง 4 ตัวแล้วค่อยทรานสโพส เสียเวลา", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["คำนวณเต็มรูป"]}, {"id": "MAT-DET-018", "difficulty": 2, "topics": ["Determinant"], "skills": ["Det 2x2", "Parameter"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 07: Determinant 2x2", "question": "กำหนดให้ $A = \\begin{bmatrix} x & 3 \\\\ 4 & x-1 \\end{bmatrix}$ ถ้า $\\det(A) = 8$ และ $x > 0$ จงหาค่าของ $x$", "choices": ["4", "5", "6", "3"], "answer": 1, "standardSolution": "$\\det(A) = x(x-1) - 12 = x^2 - x - 12 = 8 \\Rightarrow x^2 - x - 20 = 0$<br>$(x - 5)(x + 4) = 0 \\Rightarrow x = 5$ (เพราะ $x > 0$)", "shortcutSolution": "⚡ <b>Shortcut:</b> แทน $x=5$: $(5)(4) - 12 = 20 - 12 = 8$ ตรงทันที!", "concept": "ดีเทอร์มิแนนต์ $2 \\times 2$: คูณลง ลบ คูณขึ้น", "trap": "ลืมเงื่อนไข $x > 0$ หรือลืมย้าย 8 มาลบ", "estimatedTime": 40, "hasPropertyShortcut": true, "killHints": ["ลืมย้าย 8 มาลบ"]}, {"id": "MAT-DET-019", "difficulty": 3, "topics": ["Determinant"], "skills": ["Det 3x3", "Expansion"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 08: Determinant 3x3", "question": "ค่าของ $\\det \\begin{bmatrix} 2 & 0 & 1 \\\\ 3 & 4 & -2 \\\\ 1 & 0 & 5 \\end{bmatrix}$ มีค่าเท่ากับเท่าใด?", "choices": ["36", "42", "28", "32"], "answer": 0, "standardSolution": "กระจายตามหลัก 2: $\\det = 4 \\cdot C_{22} = 4 \\cdot (-1)^{2+2} \\det \\begin{bmatrix} 2 & 1 \\\\ 1 & 5 \\end{bmatrix} = 4(10 - 1) = 36$", "shortcutSolution": "⚡ <b>Shortcut:</b> เล็งหลัก 2 มีศูนย์สองตัว: $4 \\times (10 - 1) = 36$ บรรทัดเดียวจบ!", "concept": "การกระจายโคแฟกเตอร์ตามแถว/หลักที่มีเลข 0 มากที่สุด", "trap": "ต่อ 2 หลักคูณทแยงจนคิดเลขผิด", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ต่อสองหลักคิดเลขผิด"]}, {"id": "MAT-DET-020", "difficulty": 2, "topics": ["Determinant"], "skills": ["Triangular Matrix Det"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 08: Triangular Matrix", "question": "กำหนดให้ $A = \\begin{bmatrix} 3 & 7 & -5 \\\\ 0 & -2 & 9 \\\\ 0 & 0 & 4 \\end{bmatrix}$ ค่าของ $\\det(A)$ เท่ากับข้อใด?", "choices": ["-24", "24", "-12", "0"], "answer": 0, "standardSolution": "เมทริกซ์สามเหลี่ยมบน: $\\det = (3)(-2)(4) = -24$", "shortcutSolution": "⚡ <b>Shortcut:</b> เมทริกซ์สามเหลี่ยม คูณเส้นทแยงมุมหลักเลย: $3 \\times (-2) \\times 4 = -24$ ใน 2 วินาที", "concept": "ดีเทอร์มิแนนต์เมทริกซ์สามเหลี่ยม", "trap": "คำนวณเต็มรูปแบบ เสียเวลา", "estimatedTime": 25, "hasPropertyShortcut": true, "killHints": ["คำนวณเต็มรูปแบบ"]}, {"id": "MAT-DET-021", "difficulty": 3, "topics": ["Determinant"], "skills": ["Minor", "Cofactor"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 08: Minor and Cofactor", "question": "กำหนดให้ $A = \\begin{bmatrix} 1 & -2 & 3 \\\\ 0 & 4 & -1 \\\\ 2 & 5 & 1 \\end{bmatrix}$ ค่าของโคแฟกเตอร์ $C_{23}(A)$ เท่ากับเท่าใด?", "choices": ["-9", "9", "-1", "1"], "answer": 0, "standardSolution": "$M_{23} = \\det \\begin{bmatrix} 1 & -2 \\\\ 2 & 5 \\end{bmatrix} = 5 - (-4) = 9$<br>$C_{23} = (-1)^{2+3} M_{23} = (-1)(9) = -9$", "shortcutSolution": "⚡ <b>Shortcut:</b> เช็คเครื่องหมายก่อน: $2+3=5$ ติดลบ! ไมเนอร์คือ $1(5) - (-4) = 9$ จึงได้ $-9$ ทันที", "concept": "นิยามโคแฟกเตอร์ $C_{ij} = (-1)^{i+j} M_{ij}$", "trap": "ลืมคูณ $(-1)^{i+j}$ ตอบ +9", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ลืมเครื่องหมายโคแฟกเตอร์"]}, {"id": "MAT-DET-022", "difficulty": 3, "topics": ["Determinant"], "skills": ["Two identical rows det = 0"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 09: Det properties", "question": "ค่าของ $\\det \\begin{bmatrix} 12 & 35 & 48 \\\\ 2 & 5 & 7 \\\\ 4 & 10 & 14 \\end{bmatrix}$ เท่ากับเท่าใด?", "choices": ["0", "120", "-24", "48"], "answer": 0, "standardSolution": "สังเกตแถวที่ 2 และแถวที่ 3:<br>แถว 3 คือ $\\begin{bmatrix} 4 & 10 & 14 \\end{bmatrix} = 2 \\times \\begin{bmatrix} 2 & 5 & 7 \\end{bmatrix} = 2R_2$<br>ทฤษฎีบท: ถ้าเมทริกซ์มีแถวใดแถวหนึ่งเป็นพหุคูณของอีกแถวหนึ่ง (หรือเหมือนกัน) ดีเทอร์มิแนนต์เท่ากับ 0 เสมอ", "shortcutSolution": "⚡ <b>Shortcut:</b> แถว 3 เป็น 2 เท่าของแถว 2 ชัดเจน! ตอบ 0 ทันทีใน 1 วินาที ไม่ต้องแตะกระดาษทด!", "concept": "สมบัติแถวเป็นสัดส่วนกัน ดีเทอร์มิแนนต์เป็นศูนย์", "trap": "ตั้งหน้าตั้งตาคูณเลขหลักสิบหลักร้อยจนเหนื่อยเปล่า", "estimatedTime": 20, "hasPropertyShortcut": true, "killHints": ["คำนวณเต็มรูปแบบไม่ดูสมบัติ"]}, {"id": "MAT-DET-023", "difficulty": 3, "topics": ["Determinant"], "skills": ["Cofactor Expansion"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 08: Expansion", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ผลรวม $a_{11}C_{21} + a_{12}C_{22} + a_{13}C_{23}$ มีค่าเท่ากับเท่าใดเสมอ?", "choices": ["0", "$\\det(A)$", "$-\\det(A)$", "$1$"], "answer": 0, "standardSolution": "ทฤษฎีบทการกระจายโคแฟกเตอร์ข้ามแถว (Alien Cofactors):<br>ผลบวกของสมาชิกในแถวหนึ่งคูณกับโคแฟกเตอร์ของอีกแถวหนึ่ง จะมีค่าเท่ากับ 0 เสมอ<br>(เพราะเทียบเท่ากับการหา det ของเมทริกซ์ที่มี 2 แถวเหมือนกัน)", "shortcutSolution": "⚡ <b>Shortcut:</b> จำทฤษฎี: สมาชิกแถว $i$ คูณโคแฟกเตอร์แถว $i$ ได้ $\\det(A)$ แต่ถ้าคูณข้ามแถว ($i \\neq k$) ตอบ 0 ทันที!", "concept": "ทฤษฎีบท alien cofactors", "trap": "คิดว่าเป็นสูตรหา $\\det(A)$", "estimatedTime": 35, "hasPropertyShortcut": true, "killHints": ["สับสนระหว่างกระจายแถวเดียวกันกับข้ามแถว"]}, {"id": "MAT-PRP-024", "difficulty": 3, "topics": ["Determinant Properties"], "skills": ["det(kA)", "det(transpose)"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 09: det(kA)", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดยที่ $\\det(A) = -2$ แล้ว $\\det(3A^T)$ มีค่าเท่ากับข้อใด?", "choices": ["-18", "-54", "54", "-6"], "answer": 1, "standardSolution": "$\\det(3A^T) = 3^3 \\det(A^T) = 27 \\det(A) = 27(-2) = -54$", "shortcutSolution": "⚡ <b>Shortcut:</b> $3^3 \\times (-2) = 27 \\times (-2) = -54$", "concept": "สมบัติ $\\det(kA) = k^n \\det(A)$", "trap": "ลืมยกกำลัง 3 ให้ 3", "estimatedTime": 35, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง n"]}, {"id": "MAT-PRP-025", "difficulty": 3, "topics": ["Determinant Properties"], "skills": ["det(AB)", "det(inverse)"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 13: det(AB)", "question": "กำหนดให้ $A$ และ $B$ เป็นเมทริกซ์มิติ $2 \\times 2$ โดย $\\det(A) = 6$ และ $\\det(B) = -3$ ค่าของ $\\det(A B^{-1})$ เท่ากับข้อใด?", "choices": ["-2", "-18", "-1/2", "2"], "answer": 0, "standardSolution": "$\\det(AB^{-1}) = \\frac{\\det(A)}{\\det(B)} = \\frac{6}{-3} = -2$", "shortcutSolution": "⚡ <b>Shortcut:</b> นำ $6 / (-3) = -2$ 3 วินาที!", "concept": "สมบัติ $\\det(AB) = \\det(A)\\det(B)$ และ $\\det(B^{-1}) = 1/\\det(B)$", "trap": "เอา 6 ไปคูณ -3", "estimatedTime": 25, "hasPropertyShortcut": true, "killHints": ["นำไปคูณแทนหาร"]}, {"id": "MAT-PRP-026", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA)", "det(product)", "det(inverse)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 4$ และ $\\det(B) = 2$ ค่าของ $\\det(2 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["4", "8", "16", "32"], "answer": 2, "standardSolution": "$\\det(2 A^T B^{-1}) = 2^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det(B)} = 8 \\cdot 4 \\cdot \\frac{1}{2} = 16$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times (4/2) = 8 \\times 2 = 16$", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det(A)}{\\det(B)}$", "trap": "ลืมยกกำลัง 3 ที่เลข 2 ได้ 4", "estimatedTime": 40, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-PRP-027", "difficulty": 3, "topics": ["Determinant Properties", "Row Operations"], "skills": ["Row Operations on Det"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 19: Row op + det", "question": "ถ้า $\\det \\begin{bmatrix} a & b & c \\\\ d & e & f \\\\ g & h & i \\end{bmatrix} = 5$ แล้ว $\\det \\begin{bmatrix} 2a & 2b & 2c \\\\ g & h & i \\\\ d & e & f \\end{bmatrix}$ มีค่าเท่ากับเท่าใด?", "choices": ["10", "-10", "20", "-20"], "answer": 1, "standardSolution": "1) ดึง 2 จากแถวแรก: คูณด้วย 2<br>2) สลับแถว 2 กับแถว 3: ติดลบ ($-1$)<br>ดังนั้นได้ $2 \\times (-1) \\times 5 = -10$", "shortcutSolution": "⚡ <b>Shortcut:</b> คูณ 2 แถวเดียวได้ 2, สลับแถว 1 ครั้งได้ $-1$ $\\to 2(-1)(5) = -10$", "concept": "ผลของ ERO ต่อ det", "trap": "คิดว่าต้องยกกำลัง 3 ทั้งที่คูณแค่แถวเดียว หรือลืมติดลบ", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมลบจากการสลับแถว"]}, {"id": "MAT-PRP-028", "difficulty": 3, "topics": ["Determinant Properties"], "skills": ["Invariance under Row Addition"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 19: Row op + det", "question": "กำหนดให้ $A = \\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}$ มี $\\det(A) = 7$ ค่าของ $\\det \\begin{bmatrix} a+3c & b+3d \\\\ c & d \\end{bmatrix}$ เท่ากับข้อใด?", "choices": ["7", "21", "28", "10"], "answer": 0, "standardSolution": "การดำเนินการ $R_1 + 3R_2$ ไม่ทำให้ค่าดีเทอร์มิแนนต์เปลี่ยนแปลง ค่าจึงเท่ากับ 7", "shortcutSolution": "⚡ <b>Shortcut:</b> $R_i + cR_j$ ค่า det เท่าเดิมเสมอ ตอบ 7 ทันที", "concept": "Invariance under row addition", "trap": "เอา 3 ไปคูณ 7", "estimatedTime": 25, "hasPropertyShortcut": true, "killHints": ["เอาสัมประสิทธิ์ไปคูณ"]}, {"id": "MAT-PRP-029", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det of power", "Diagonalizable"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 09: det(A^k)", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่งสอดคล้องกับ $A^3 = 8I_3$ ข้อใดคือค่าของ $\\det(A)$ ที่เป็นจำนวนจริง?", "choices": ["2", "8", "4", "16"], "answer": 1, "standardSolution": "$\\det(A^3) = \\det(8I_3) \\Rightarrow (\\det A)^3 = 8^3 \\det(I_3) = 8^3 \\Rightarrow \\det(A) = 8$", "shortcutSolution": "⚡ <b>Shortcut:</b> $(\\det A)^3 = \\det(8I) = 8^3 \\Rightarrow \\det(A) = 8$ ตอบ 8 ทันที!", "concept": "$\\det(cA) = c^n \\det(A)$", "trap": "ลืมยกกำลัง 3 ที่เลข 8 คิดว่าได้ 8 แล้วถอดรากได้ 2 (ช้อยส์ A)", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["คิดว่า det(8I)=8"]}, {"id": "MAT-PRP-030", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["Inverse Det with Scalar"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 14: det(A^-1)", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่งมี $\\det(A) = 2$ ค่าของ $\\det((2A)^{-1})$ เท่ากับข้อใด?", "choices": ["1/16", "1/4", "1/8", "4"], "answer": 0, "standardSolution": "$\\det((2A)^{-1}) = \\frac{1}{\\det(2A)} = \\frac{1}{2^3 \\det(A)} = \\frac{1}{8 \\times 2} = \\frac{1}{16}$", "shortcutSolution": "⚡ <b>Shortcut:</b> ดึง 2 ออกมาก่อนกลับเศษส่วน: $\\frac{1}{2^3 \\times 2} = \\frac{1}{16}$ บรรทัดเดียวจบ!", "concept": "สมบัติ $\\det((kA)^{-1}) = \\frac{1}{k^n \\det A}$", "trap": "ดึง 2 ออกมาไม่ยกกำลัง 3 ได้ $1/(2 \\times 2) = 1/4$", "estimatedTime": 40, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-INV-031", "difficulty": 2, "topics": ["Inverse"], "skills": ["Inverse 2x2 formula"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 08: Inverse 2x2", "question": "อินเวิร์สการคูณของเมทริกซ์ $A = \\begin{bmatrix} 3 & 5 \\\\ 1 & 2 \\end{bmatrix}$ คือข้อใด?", "choices": ["$\\begin{bmatrix} 2 & -5 \\\\ -1 & 3 \\end{bmatrix}$", "$\\begin{bmatrix} -2 & 5 \\\\ 1 & -3 \\end{bmatrix}$", "$\\begin{bmatrix} 2 & -1 \\\\ -5 & 3 \\end{bmatrix}$", "$\\begin{bmatrix} 3 & -5 \\\\ -1 & 2 \\end{bmatrix}$"], "answer": 0, "standardSolution": "$\\det(A) = 6 - 5 = 1$<br>$A^{-1} = \\frac{1}{1}\\begin{bmatrix} 2 & -5 \\\\ -1 & 3 \\end{bmatrix} = \\begin{bmatrix} 2 & -5 \\\\ -1 & 3 \\end{bmatrix}$", "shortcutSolution": "⚡ <b>Shortcut:</b> ทแยงหลักสลับที่ ทแยงรองเปลี่ยนเครื่องหมาย หารด้วย $\\det=1$ ตอบข้อ A", "concept": "สูตรอินเวิร์ส $2 \\times 2$", "trap": "สลับที่ผิดเส้นทแยงมุม", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["สลับที่เส้นทแยงมุมรอง"]}, {"id": "MAT-INV-032", "difficulty": 3, "topics": ["Inverse", "Parameter"], "skills": ["Singular Matrix", "det = 0"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 16: Inverse + parameter", "question": "กำหนดให้ $A = \\begin{bmatrix} k-1 & 2 \\\\ 3 & k \\end{bmatrix}$ เมทริกซ์ $A$ จะ<b>ไม่มีอินเวิร์ส</b> เมื่อ $k$ มีค่าเท่ากับข้อใด?", "choices": ["$k = 3$ หรือ $k = -2$", "$k = -3$ หรือ $k = 2$", "$k = 1$ หรือ $k = 6$", "$k = -1$ หรือ $k = 6$"], "answer": 0, "standardSolution": "ไม่มีอินเวิร์ส $\\Leftrightarrow \\det(A) = 0$<br>$(k-1)k - 6 = 0 \\Rightarrow k^2 - k - 6 = 0 \\Rightarrow (k-3)(k+2) = 0 \\Rightarrow k = 3, -2$", "shortcutSolution": "⚡ <b>Shortcut:</b> แทน $k=3$: $(2)(3) - 6 = 0$ จริง! เช็ค $k=-2$: $(-3)(-2) - 6 = 0$ จริง! ตอบข้อ A", "concept": "Singular Matrix: $\\det(A) = 0$", "trap": "แยกตัวประกอบสลับเครื่องหมายเป็น $(k+3)(k-2)$", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["แยกตัวประกอบผิด"]}, {"id": "MAT-ADJ-033", "difficulty": 3, "topics": ["Adjoint"], "skills": ["Adjoint property", "det(adj A)"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 15: Adjoint + inverse", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดยมี $\\det(A) = 4$ แล้วค่าของ $\\det(\\text{adj}(A))$ เท่ากับข้อใด?", "choices": ["4", "16", "64", "1/4"], "answer": 1, "standardSolution": "$\\det(\\text{adj}(A)) = (\\det A)^{n-1} = 4^{3-1} = 4^2 = 16$", "shortcutSolution": "⚡ <b>Shortcut:</b> ท่องจำ: $\\det(\\text{adj}(A)) = (\\det A)^{n-1} = 4^2 = 16$", "concept": "ทฤษฎีบท $\\det(\\text{adj}(A)) = (\\det A)^{n-1}$", "trap": "ลืมหัก 1 จากเลขชี้กำลัง ได้ $4^3 = 64$", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["ลืมลบ 1 จากเลขชี้กำลัง"]}, {"id": "MAT-ADJ-034", "difficulty": 4, "topics": ["Adjoint", "Inverse"], "skills": ["A adj(A) = det(A) I"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 15: Adjoint + inverse", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่งสอดคล้องกับสมการ $A \\cdot \\text{adj}(A) = \\begin{bmatrix} 5 & 0 & 0 \\\\ 0 & 5 & 0 \\\\ 0 & 0 & 5 \\end{bmatrix}$ ข้อใดคือค่าของ $\\det(A)$?", "choices": ["5", "25", "125", "$\\sqrt{5}$"], "answer": 0, "standardSolution": "จาก $A \\cdot \\text{adj}(A) = \\det(A) I_3$<br>เทียบกับ $5I_3$ จะได้ $\\det(A) = 5$", "shortcutSolution": "⚡ <b>Shortcut:</b> สมาชิกบนเส้นทแยงมุมของ $A \\cdot \\text{adj}(A)$ คือ $\\det(A)$ ตอบ 5 ทันที", "concept": "เอกลักษณ์ $A \\cdot \\text{adj}(A) = \\det(A) I$", "trap": "ไปหา det ของเมทริกซ์ขวามือได้ 125", "estimatedTime": 35, "hasPropertyShortcut": true, "killHints": ["ไปหา det ของเมทริกซ์ผลลัพธ์"]}, {"id": "MAT-ADJ-035", "difficulty": 5, "topics": ["Adjoint", "Determinant"], "skills": ["Nested Adjoint"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Nested Adjoint", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดยมี $\\det(A) = 2$ ค่าของ $\\det(\\text{adj}(\\text{adj}(A)))$ เท่ากับข้อใด?", "choices": ["4", "8", "16", "32"], "answer": 2, "standardSolution": "สูตร Adjoint ซ้อน: $\\det(\\text{adj}(\\text{adj}(A))) = (\\det A)^{(n-1)^2} = 2^{(3-1)^2} = 2^4 = 16$", "shortcutSolution": "⚡ <b>Shortcut:</b> มิติ 3 ซ้อน 2 ชั้น: ยกกำลัง $(3-1)^2 = 4 \\to 2^4 = 16$", "concept": "สูตร $\\det(\\text{adj}^k(A)) = (\\det A)^{(n-1)^k}$", "trap": "คิดเลขยกกำลังเป็น $2 \\times 2 = 4$", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["คิดเลขยกกำลังผิด"]}, {"id": "MAT-INV-036", "difficulty": 4, "topics": ["Inverse"], "skills": ["Inverse of Product"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 12: Inverse of product", "question": "ถ้า $A$ และ $B$ เป็นเมทริกซ์จัตุรัสมิติ $n \\times n$ ที่มีอินเวิร์ส ข้อใดคืออินเวิร์สของเมทริกซ์ $AB$?", "choices": ["$B^{-1} A^{-1}$", "$A^{-1} B^{-1}$", "$(A^{-1}B)^T$", "$B A^{-1}$"], "answer": 0, "standardSolution": "$(AB)(B^{-1}A^{-1}) = A(B B^{-1})A^{-1} = A I A^{-1} = A A^{-1} = I$<br>ดังนั้น $(AB)^{-1} = B^{-1} A^{-1}$", "shortcutSolution": "⚡ <b>Shortcut:</b> ท่องจำ: 'อินเวิร์สของผลคูณ ต้องสลับลำดับหน้าหลัง' $(AB)^{-1} = B^{-1} A^{-1}$ ตอบข้อ A", "concept": "สมบัติ $(AB)^{-1} = B^{-1} A^{-1}$", "trap": "ไม่สลับลำดับ ตอบ $A^{-1} B^{-1}$", "estimatedTime": 30, "hasPropertyShortcut": false, "killHints": ["ไม่สลับลำดับ"]}, {"id": "MAT-SYS-037", "difficulty": 3, "topics": ["Linear Equations"], "skills": ["AX = B", "Infinitely Many Solutions"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 17: AX = B", "question": "ระบบสมการ $\\begin{cases} 2x + 3y = 7 \\\\ 4x + 6y = k \\end{cases}$ จะมีคำตอบ<b>มากมายนับไม่ถ้วน</b> เมื่อ $k$ มีค่าเท่าใด?", "choices": ["14", "7", "0", "ไม่มีค่า k ที่เป็นไปได้"], "answer": 0, "standardSolution": "แถวที่ 2 เป็น 2 เท่าของแถวที่ 1 ทั้งด้านซ้ายและขวา: $k = 2(7) = 14$", "shortcutSolution": "⚡ <b>Shortcut:</b> เทียบอัตราส่วน: $2/4 = 3/6 = 7/k \\Rightarrow k = 14$", "concept": "เงื่อนไขคำตอบนับไม่ถ้วน", "trap": "สับสนกับเงื่อนไขไม่มีคำตอบ ($k \\neq 14$)", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["สับสนเงื่อนไขไม่มีคำตอบ"]}, {"id": "MAT-SYS-038", "difficulty": 3, "topics": ["Linear Equations"], "skills": ["Cramer's Rule"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 17: AX = B", "question": "ระบบสมการ $\\begin{cases} x + 2y = 5 \\\\ 3x - y = 1 \\end{cases}$ ถ้าใช้กฎของคราเมอร์ ค่าของ $\\det(A_x)$ คือข้อใด?", "choices": ["-7", "7", "14", "-14"], "answer": 0, "standardSolution": "$A_x = \\begin{bmatrix} 5 & 2 \\\\ 1 & -1 \\end{bmatrix} \\Rightarrow \\det(A_x) = (5)(-1) - (2)(1) = -5 - 2 = -7$", "shortcutSolution": "⚡ <b>Shortcut:</b> แทนเวกเตอร์ขวา $[5, 1]^T$ ลงหลักแรก: $5(-1) - 2(1) = -7$", "concept": "กฎของคราเมอร์ $x = \\det(A_x)/\\det(A)$", "trap": "คิดเลขผิดเครื่องหมาย", "estimatedTime": 35, "hasPropertyShortcut": false, "killHints": ["คิดเลขผิดเครื่องหมาย"]}, {"id": "MAT-ROW-039", "difficulty": 4, "topics": ["Row Operations"], "skills": ["Augmented Matrix", "Back Substitution"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 18: Row operation", "question": "กำหนดเมทริกซ์แต่งเติม $[A|B] = \\left[\\begin{array}{ccc|c} 1 & 2 & -1 & 3 \\\\ 0 & 1 & 4 & -2 \\\\ 0 & 0 & 1 & 1 \\end{array}\\right]$ ค่าของ $y$ ในระบบสมการนี้เท่ากับเท่าใด?", "choices": ["-6", "6", "-2", "2"], "answer": 0, "standardSolution": "แถว 3: $z = 1$<br>แถว 2: $y + 4z = -2 \\Rightarrow y + 4(1) = -2 \\Rightarrow y = -6$", "shortcutSolution": "⚡ <b>Shortcut:</b> ดูเฉพาะแถว 2 และ 3: $y = -2 - 4(1) = -6$", "concept": "การแทนค่าย้อนกลับจาก REF", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 35, "hasPropertyShortcut": true, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-ROW-040", "difficulty": 4, "topics": ["Row Operations"], "skills": ["Elementary Row Operations"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 18: ERO", "question": "ถ้าเริ่มต้นจาก $\\begin{bmatrix} 1 & 3 \\\\ 2 & 5 \\end{bmatrix}$ แล้วดำเนินการตามแถว $R_2 \\leftarrow R_2 - 2R_1$ เมทริกซ์ที่ได้คือข้อใด?", "choices": ["$\\begin{bmatrix} 1 & 3 \\\\ 0 & -1 \\end{bmatrix}$", "$\\begin{bmatrix} 1 & 3 \\\\ 0 & 1 \\end{bmatrix}$", "$\\begin{bmatrix} 1 & 3 \\\\ 0 & -6 \\end{bmatrix}$", "$\\begin{bmatrix} -1 & -1 \\\\ 2 & 5 \\end{bmatrix}$"], "answer": 0, "standardSolution": "แถว 1 คงเดิม: $[1, 3]$<br>แถว 2 ใหม่: $[2 - 2(1), 5 - 2(3)] = [0, 5-6] = [0, -1]$", "shortcutSolution": "⚡ <b>Shortcut:</b> เช็คตำแหน่ง (2,2): $5 - 2(3) = -1$ ตัดช้อยส์อื่นหมด!", "concept": "การดำเนินการตามแถว", "trap": "ลบเลขผิดเป็น $5 - 6 = 1$", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["ลบเลขผิดเครื่องหมาย"]}, {"id": "MAT-PAR-041", "difficulty": 4, "topics": ["Parameter", "Determinant"], "skills": ["Quadratic det", "Product of roots"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดให้ $A = \\begin{bmatrix} x & 2 & 0 \\\\ 1 & x & 1 \\\\ 0 & 3 & 1 \\end{bmatrix}$ ถ้า $\\det(A) = 0$ แล้วผลคูณของค่า $x$ ทั้งหมดที่เป็นไปได้เท่ากับเท่าใด?", "choices": ["-2", "2", "-6", "6"], "answer": 0, "standardSolution": "กระจายแถว 1: $\\det(A) = x(x - 3) - 2(1 - 0) = x^2 - 3x - 2 = 0$<br>ผลคูณของรากสมการ $ax^2 + bx + c = 0$ คือ $c/a = -2/1 = -2$", "shortcutSolution": "⚡ <b>Shortcut:</b> $\\det(A) = x^2 - 3x - 2 = 0 \\to$ ผลคูณของรากคือ $c/a = -2$ ไม่ต้องแก้หา $x$!", "concept": "ความสัมพันธ์ระหว่างรากสมการกำลังสองกับดีเทอร์มิแนนต์", "trap": "เสียเวลาถอดรูทหา $x$", "estimatedTime": 50, "hasPropertyShortcut": true, "killHints": ["เสียเวลาถอดรูท"]}, {"id": "MAT-PAR-042", "difficulty": 4, "topics": ["Parameter", "Matrix Multiplication"], "skills": ["AB = I"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 16: AB = I", "question": "กำหนดให้ $A = \\begin{bmatrix} 2 & x \\\\ 3 & 2 \\end{bmatrix}$ และ $B = \\begin{bmatrix} 2 & -1 \\\\ y & 2 \\end{bmatrix}$ ถ้า $AB = I_2$ จงหาค่าของ $x + y$", "choices": ["-2", "2", "0", "-4"], "answer": 0, "standardSolution": "จาก $AB = I \\Rightarrow B = A^{-1}$<br>สูตรอินเวิร์ส: $A^{-1} = \\frac{1}{4 - 3x}\\begin{bmatrix} 2 & -x \\\\ -3 & 2 \\end{bmatrix}$<br>เทียบกับ $B = \\begin{bmatrix} 2 & -1 \\\\ y & 2 \\end{bmatrix}$:<br>สมาชิกตำแหน่ง (1,1) คือ $2 = \\frac{2}{4-3x} \\Rightarrow 4 - 3x = 1 \\Rightarrow 3x = 3 \\Rightarrow x = 1$<br>เทียบตำแหน่ง (1,2): $-1 = -x = -1$ (ตรง)<br>เทียบตำแหน่ง (2,1): $y = -3$<br>ดังนั้น $x + y = 1 + (-3) = -2$", "shortcutSolution": "⚡ <b>Shortcut:</b> ตำแหน่ง (1,2) ของ $B$ คือ $-1$ เทียบกับ $-x$ ของ $A^{-1}$ ได้ $x = 1$<br>ตำแหน่ง (2,1) ของ $B$ คือ $y$ เทียบกับ $-3$ ของ $A^{-1}$ ได้ $y = -3$<br>$x + y = 1 - 3 = -2$", "concept": "นิยามอินเวิร์ส $AB = I \\Leftrightarrow B = A^{-1}$", "trap": "ไปตั้งระบบสมการ 4 ตัวแปรคูณเต็มรูป", "estimatedTime": 50, "hasPropertyShortcut": true, "killHints": ["คูณเมทริกซ์เต็มรูป"]}, {"id": "MAT-MLT-043", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(AB), det(transpose), det(inverse)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B, C$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 3, \\det(B) = -2, \\det(C) = 4$ จงหาค่าของ $\\det(2 A^2 B^T C^{-1})$", "choices": ["-36", "-72", "72", "36"], "answer": 0, "standardSolution": "$\\det(2 A^2 B^T C^{-1}) = 2^3 \\cdot (\\det A)^2 \\cdot (\\det B) \\cdot \\frac{1}{\\det C} = 8 \\cdot 9 \\cdot (-2) \\cdot \\frac{1}{4} = -36$", "shortcutSolution": "⚡ <b>Shortcut:</b> $8 \\times 9 \\times (-2) / 4 = 2 \\times 9 \\times (-2) = -36$", "concept": "การรวมสมบัติของดีเทอร์มิแนนต์", "trap": "ลืมยกกำลัง 3 ให้เลข 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-MLT-044", "difficulty": 4, "topics": ["Adjoint", "Determinant"], "skills": ["det(k adj(A))"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint + det", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 3$ ค่าของ $\\det(2\\,\\text{adj}(A))$ เท่ากับข้อใด?", "choices": ["72", "18", "144", "36"], "answer": 0, "standardSolution": "$\\det(2\\,\\text{adj}(A)) = 2^3 \\det(\\text{adj}(A)) = 8 \\cdot 3^{3-1} = 8 \\cdot 9 = 72$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times 3^{3-1} = 8 \\times 9 = 72$", "concept": "ดึงสเกลาร์ออกจาก adjoint", "trap": "ดึง 2 ออกมาไม่ยกกำลัง 3 ได้ $2 \\times 9 = 18$", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-MLT-045", "difficulty": 5, "topics": ["Inverse", "Determinant", "Adjoint"], "skills": ["Combined matrix equation"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "ให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 2$ ถ้า $B = A^{-1} \\text{adj}(A)$ แล้วค่าของ $\\det(B)$ เท่ากับข้อใด?", "choices": ["2", "4", "1", "8"], "answer": 0, "standardSolution": "$\\det(B) = \\det(A^{-1}) \\cdot \\det(\\text{adj}(A)) = \\frac{1}{2} \\cdot 2^{3-1} = \\frac{1}{2} \\cdot 4 = 2$", "shortcutSolution": "⚡ <b>Shortcut:</b> $\\frac{1}{\\det A} \\times (\\det A)^2 = \\det(A) = 2$ ทันที!", "concept": "สมบัติ $\\det(A^{-1}) = 1/\\det(A)$ และ $\\det(\\text{adj}(A)) = (\\det A)^{n-1}$", "trap": "คิดว่า $A^{-1}\\text{adj}(A) = I$ แล้วตอบ 1", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["คิดว่า A^-1 adj(A) = I"]}, {"id": "MAT-EXM-046", "difficulty": 5, "topics": ["Matrix Equations", "Determinant"], "skills": ["Cayley-Hamilton"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Polynomial in Matrix", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $2 \\times 2$ ซึ่งสอดคล้องกับสมการ $A^2 - 3A + 2I_2 = \\mathbf{0}$ ถ้า $\\det(A) \\neq 1$ แล้วค่าของ $\\det(A)$ เท่ากับข้อใด?", "choices": ["2", "3", "-2", "0"], "answer": 0, "standardSolution": "จากทฤษฎีบท Cayley-Hamilton สำหรับเมทริกซ์ $2 \\times 2$: $A^2 - \\text{tr}(A)A + \\det(A)I = \\mathbf{0}$<br>เทียบสัมประสิทธิ์: $\\det(A) = 2$", "shortcutSolution": "⚡ <b>Shortcut (Cayley-Hamilton):</b> สำหรับ $2 \\times 2$ พจน์หน้า $I$ คือ $\\det(A)$ ทันที $\\to \\det(A) = 2$", "concept": "ทฤษฎีบท Cayley-Hamilton", "trap": "สมมุติตัวแปร 4 ตัวแก้สมการ", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["สมมุติตัวแปรแก้สมการ"]}, {"id": "MAT-EXM-047", "difficulty": 6, "topics": ["Determinant Properties", "Value Substitution"], "skills": ["Value substitution shortcut"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Algebraic Det", "question": "ค่าของ $\\det \\begin{bmatrix} 1 & x & x^2 \\\\ 1 & y & y^2 \\\\ 1 & z & z^2 \\end{bmatrix}$ (Vandermonde Determinant) มีค่าเท่ากับข้อใด?", "choices": ["$(y - x)(z - x)(z - y)$", "$(x - y)(y - z)(z - x)$", "$(x + y)(y + z)(z + x)$", "$(x^2 - y^2)(y^2 - z^2)$"], "answer": 0, "standardSolution": "วิธีตรง: ทำ ERO $R_2 - R_1$ และ $R_3 - R_1$ ได้ $(y-x)(z-x)(z-y)$<br>วิธีลัด: แทน $x=0, y=1, z=2$ ได้ $\\det = 2$<br>เช็คข้อ A: $(1)(2)(1) = 2$ ตรงเป๊ะ!", "shortcutSolution": "⚡ <b>Shortcut:</b> แทนตัวเลขง่ายๆ $x=0, y=1, z=2$ เช็คค่า det กับช้อยส์ ตัดช้อยส์ได้ใน 15 วินาที", "concept": "เทคนิคการแทนค่าตัวเลขในโจทย์ติดตัวแปร", "trap": "กระจายพีชคณิตเต็มรูปจนผิด", "estimatedTime": 60, "hasPropertyShortcut": true, "killHints": ["กระจายพีชคณิตเต็มรูป"]}, {"id": "MAT-EXM-048", "difficulty": 6, "topics": ["Inverse", "Matrix Equations"], "skills": ["Invertibility Test"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 12: Invertibility", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ถ้า $A^2 + 2A + I_3 = \\mathbf{0}$ ข้อใดต่อไปนี้เป็นจริงเสมอ?", "choices": ["$A$ มีอินเวิร์ส และ $A^{-1} = -A - 2I_3$", "$A$ ไม่มีอินเวิร์ส เพราะ $\\det(A) = 0$", "$A^{-1} = A + 2I_3$", "$\\det(A) = 2$"], "answer": 0, "standardSolution": "จัดรูป: $A(A + 2I) = -I \\Rightarrow A(-A - 2I) = I$<br>จากนิยาม $AB = I \\Rightarrow B = A^{-1}$ ดังนั้น $A^{-1} = -A - 2I$", "shortcutSolution": "⚡ <b>Shortcut:</b> ย้าย $I$ ไปขวา: $A(-A-2I) = I$ สิ่งที่คูณกับ $A$ แล้วได้ $I$ คือ $A^{-1}$ ตอบข้อ A", "concept": "การจัดรูปหาอินเวิร์ส", "trap": "ลืมเครื่องหมายลบ", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมเครื่องหมายลบ"]}, {"id": "MAT-EXM-049", "difficulty": 5, "topics": ["Adjoint", "Inverse", "Determinant"], "skills": ["Cofactor Matrix properties"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Cofactor matrix", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดยที่ $\\det(A) = -3$ ถ้า $C(A)$ คือเมทริกซ์โคแฟกเตอร์ของ $A$ แล้ว $\\det(C(A))$ มีค่าเท่ากับเท่าใด?", "choices": ["-3", "9", "-9", "27"], "answer": 1, "standardSolution": "$\\text{adj}(A) = [C(A)]^T \\Rightarrow \\det(C(A)) = \\det(\\text{adj}(A)) = (\\det A)^{3-1} = (-3)^2 = 9$", "shortcutSolution": "⚡ <b>Shortcut:</b> $\\det(C(A)) = (\\det A)^{n-1} = (-3)^2 = 9$ ยกกำลังคู่ได้บวก ตอบ 9", "concept": "ความสัมพันธ์ $\\text{adj}(A) = C(A)^T$", "trap": "ตอบติดลบ -9", "estimatedTime": 40, "hasPropertyShortcut": true, "killHints": ["ตอบติดลบ -9"]}, {"id": "MAT-EXM-050", "difficulty": 6, "topics": ["Linear Equations", "Determinant"], "skills": ["Homogeneous System"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 17: Homogeneous system", "question": "ระบบสมการเอกพันธ์ $\\begin{cases} x + 2y - z = 0 \\\\ 2x + ky + z = 0 \\\\ 3x + y + 2z = 0 \\end{cases}$ จะมีคำตอบ<b>อื่นที่ไม่ใช่คำตอบศูนย์</b> เมื่อ $k$ มีค่าเท่าใด?", "choices": ["$k = 1$", "$k = -1$", "$k = 3$", "$k = -3$"], "answer": 0, "standardSolution": "ระบบเอกพันธ์มีคำตอบอื่น $\\Leftrightarrow \\det(A) = 0$<br>$\\det \\begin{bmatrix} 1 & 2 & -1 \\\\ 2 & k & 1 \\\\ 3 & 1 & 2 \\end{bmatrix} = 1(2k - 1) - 2(4 - 3) - 1(2 - 3k) = 0$<br>$2k - 1 - 2 - 2 + 3k = 0 \\Rightarrow 5k - 5 = 0 \\Rightarrow k = 1$", "shortcutSolution": "⚡ <b>Shortcut:</b> คำตอบอื่น $\\Leftrightarrow \\det = 0$ กระจายแถว 1: $5k - 5 = 0 \\Rightarrow k = 1$", "concept": "ระบบสมการเอกพันธ์ $AX = \\mathbf{0}$", "trap": "จำสับสนว่า $\\det \\neq 0$", "estimatedTime": 50, "hasPropertyShortcut": true, "killHints": ["จำเงื่อนไข det สับสน"]}, {"id": "MAT-BNK-071", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 4 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 4$ จงหาค่าของ $k$", "choices": ["3", "-4/4", "0", "4"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(4) = 4 \\Rightarrow 4k = 4 + 8 = 12 \\Rightarrow k = 3$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 8 = 4 \\Rightarrow 4k = 12 \\Rightarrow k = 3$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-072", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 1 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 5$ จงหาค่าของ $k$", "choices": ["7/4", "3/4", "0", "5"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(1) = 5 \\Rightarrow 4k = 5 + 2 = 7 \\Rightarrow k = 7/4$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 2 = 5 \\Rightarrow 4k = 7 \\Rightarrow k = 7/4$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-073", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 2 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 6$ จงหาค่าของ $k$", "choices": ["10/4", "2/4", "0", "6"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(2) = 6 \\Rightarrow 4k = 6 + 4 = 10 \\Rightarrow k = 10/4$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 4 = 6 \\Rightarrow 4k = 10 \\Rightarrow k = 10/4$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-074", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 3 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 7$ จงหาค่าของ $k$", "choices": ["13/4", "1/4", "0", "7"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(3) = 7 \\Rightarrow 4k = 7 + 6 = 13 \\Rightarrow k = 13/4$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 6 = 7 \\Rightarrow 4k = 13 \\Rightarrow k = 13/4$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-075", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 4 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 3$ จงหาค่าของ $k$", "choices": ["11/4", "-5/4", "0", "3"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(4) = 3 \\Rightarrow 4k = 3 + 8 = 11 \\Rightarrow k = 11/4$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 8 = 3 \\Rightarrow 4k = 11 \\Rightarrow k = 11/4$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-076", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 1 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 4$ จงหาค่าของ $k$", "choices": ["6/4", "2/4", "0", "4"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(1) = 4 \\Rightarrow 4k = 4 + 2 = 6 \\Rightarrow k = 6/4$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 2 = 4 \\Rightarrow 4k = 6 \\Rightarrow k = 6/4$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-077", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 2 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 5$ จงหาค่าของ $k$", "choices": ["9/4", "1/4", "0", "5"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(2) = 5 \\Rightarrow 4k = 5 + 4 = 9 \\Rightarrow k = 9/4$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 4 = 5 \\Rightarrow 4k = 9 \\Rightarrow k = 9/4$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-078", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 3 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 6$ จงหาค่าของ $k$", "choices": ["3", "0/4", "0", "6"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(3) = 6 \\Rightarrow 4k = 6 + 6 = 12 \\Rightarrow k = 3$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 6 = 6 \\Rightarrow 4k = 12 \\Rightarrow k = 3$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-079", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 4 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 7$ จงหาค่าของ $k$", "choices": ["15/4", "-1/4", "0", "7"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(4) = 7 \\Rightarrow 4k = 7 + 8 = 15 \\Rightarrow k = 15/4$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 8 = 7 \\Rightarrow 4k = 15 \\Rightarrow k = 15/4$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-080", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 1 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 3$ จงหาค่าของ $k$", "choices": ["5/4", "1/4", "0", "3"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(1) = 3 \\Rightarrow 4k = 3 + 2 = 5 \\Rightarrow k = 5/4$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 2 = 3 \\Rightarrow 4k = 5 \\Rightarrow k = 5/4$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-081", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 2 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 4$ จงหาค่าของ $k$", "choices": ["2", "0/4", "0", "4"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(2) = 4 \\Rightarrow 4k = 4 + 4 = 8 \\Rightarrow k = 2$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 4 = 4 \\Rightarrow 4k = 8 \\Rightarrow k = 2$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-082", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 3 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 5$ จงหาค่าของ $k$", "choices": ["11/4", "-1/4", "0", "5"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(3) = 5 \\Rightarrow 4k = 5 + 6 = 11 \\Rightarrow k = 11/4$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 6 = 5 \\Rightarrow 4k = 11 \\Rightarrow k = 11/4$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-083", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 4 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 6$ จงหาค่าของ $k$", "choices": ["14/4", "-2/4", "0", "6"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(4) = 6 \\Rightarrow 4k = 6 + 8 = 14 \\Rightarrow k = 14/4$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 8 = 6 \\Rightarrow 4k = 14 \\Rightarrow k = 14/4$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-084", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 1 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 7$ จงหาค่าของ $k$", "choices": ["9/4", "5/4", "0", "7"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(1) = 7 \\Rightarrow 4k = 7 + 2 = 9 \\Rightarrow k = 9/4$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 2 = 7 \\Rightarrow 4k = 9 \\Rightarrow k = 9/4$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-085", "difficulty": 3, "topics": ["Determinant", "Parameter"], "skills": ["Solving for parameter"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 10: Determinant + parameter", "question": "กำหนดเมทริกซ์ $A = \\begin{bmatrix} k & 2 \\\\ 2 & 4 \\end{bmatrix}$ ถ้า $\\det(A) = 3$ จงหาค่าของ $k$", "choices": ["7/4", "-1/4", "0", "3"], "answer": 0, "standardSolution": "$\\det(A) = 4k - 2(2) = 3 \\Rightarrow 4k = 3 + 4 = 7 \\Rightarrow k = 7/4$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4k - 4 = 3 \\Rightarrow 4k = 7 \\Rightarrow k = 7/4$ ใน 5 วินาที", "concept": "การแก้สมการดีเทอร์มิแนนต์ $2 \\times 2$ หาค่าพารามิเตอร์", "trap": "ย้ายข้างผิดเครื่องหมาย", "estimatedTime": 40, "hasPropertyShortcut": false, "killHints": ["ย้ายข้างผิดเครื่องหมาย"]}, {"id": "MAT-BNK-086", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 4$ และ $\\det(B) = 3$ ค่าของ $\\det(4 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["256/3", "5", "-256/3", "256"], "answer": 0, "standardSolution": "$\\det(4 A^T B^{-1}) = 4^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 64 \\cdot 4 \\cdot \\frac{1}{3} = 256/3$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4^3 \\times (4/3) = 256/3$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 4", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 4"]}, {"id": "MAT-BNK-087", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 5$ และ $\\det(B) = 1$ ค่าของ $\\det(2 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["40", "10", "-40", "40"], "answer": 0, "standardSolution": "$\\det(2 A^T B^{-1}) = 2^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 8 \\cdot 5 \\cdot \\frac{1}{1} = 40$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times (5/1) = 40$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 2"]}, {"id": "MAT-BNK-088", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 2$ และ $\\det(B) = 2$ ค่าของ $\\det(3 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["27", "3", "-27", "54"], "answer": 0, "standardSolution": "$\\det(3 A^T B^{-1}) = 3^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 27 \\cdot 2 \\cdot \\frac{1}{2} = 27$", "shortcutSolution": "⚡ <b>Shortcut:</b> $3^3 \\times (2/2) = 27$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 3", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 3"]}, {"id": "MAT-BNK-089", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 3$ และ $\\det(B) = 3$ ค่าของ $\\det(4 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["64", "4", "-64", "192"], "answer": 0, "standardSolution": "$\\det(4 A^T B^{-1}) = 4^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 64 \\cdot 3 \\cdot \\frac{1}{3} = 64$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4^3 \\times (3/3) = 64$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 4", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 4"]}, {"id": "MAT-BNK-090", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 4$ และ $\\det(B) = 1$ ค่าของ $\\det(2 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["32", "8", "-32", "32"], "answer": 0, "standardSolution": "$\\det(2 A^T B^{-1}) = 2^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 8 \\cdot 4 \\cdot \\frac{1}{1} = 32$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times (4/1) = 32$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 2"]}, {"id": "MAT-BNK-091", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 5$ และ $\\det(B) = 2$ ค่าของ $\\det(3 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["135/2", "7", "-135/2", "135"], "answer": 0, "standardSolution": "$\\det(3 A^T B^{-1}) = 3^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 27 \\cdot 5 \\cdot \\frac{1}{2} = 135/2$", "shortcutSolution": "⚡ <b>Shortcut:</b> $3^3 \\times (5/2) = 135/2$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 3", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 3"]}, {"id": "MAT-BNK-092", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 2$ และ $\\det(B) = 3$ ค่าของ $\\det(4 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["128/3", "2", "-128/3", "128"], "answer": 0, "standardSolution": "$\\det(4 A^T B^{-1}) = 4^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 64 \\cdot 2 \\cdot \\frac{1}{3} = 128/3$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4^3 \\times (2/3) = 128/3$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 4", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 4"]}, {"id": "MAT-BNK-093", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 3$ และ $\\det(B) = 1$ ค่าของ $\\det(2 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["24", "6", "-24", "24"], "answer": 0, "standardSolution": "$\\det(2 A^T B^{-1}) = 2^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 8 \\cdot 3 \\cdot \\frac{1}{1} = 24$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times (3/1) = 24$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 2"]}, {"id": "MAT-BNK-094", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 4$ และ $\\det(B) = 2$ ค่าของ $\\det(3 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["54", "6", "-54", "108"], "answer": 0, "standardSolution": "$\\det(3 A^T B^{-1}) = 3^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 27 \\cdot 4 \\cdot \\frac{1}{2} = 54$", "shortcutSolution": "⚡ <b>Shortcut:</b> $3^3 \\times (4/2) = 54$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 3", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 3"]}, {"id": "MAT-BNK-095", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 5$ และ $\\det(B) = 3$ ค่าของ $\\det(4 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["320/3", "6", "-320/3", "320"], "answer": 0, "standardSolution": "$\\det(4 A^T B^{-1}) = 4^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 64 \\cdot 5 \\cdot \\frac{1}{3} = 320/3$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4^3 \\times (5/3) = 320/3$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 4", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 4"]}, {"id": "MAT-BNK-096", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 2$ และ $\\det(B) = 1$ ค่าของ $\\det(2 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["16", "4", "-16", "16"], "answer": 0, "standardSolution": "$\\det(2 A^T B^{-1}) = 2^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 8 \\cdot 2 \\cdot \\frac{1}{1} = 16$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times (2/1) = 16$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 2"]}, {"id": "MAT-BNK-097", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 3$ และ $\\det(B) = 2$ ค่าของ $\\det(3 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["81/2", "4", "-81/2", "81"], "answer": 0, "standardSolution": "$\\det(3 A^T B^{-1}) = 3^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 27 \\cdot 3 \\cdot \\frac{1}{2} = 81/2$", "shortcutSolution": "⚡ <b>Shortcut:</b> $3^3 \\times (3/2) = 81/2$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 3", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 3"]}, {"id": "MAT-BNK-098", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 4$ และ $\\det(B) = 3$ ค่าของ $\\det(4 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["256/3", "5", "-256/3", "256"], "answer": 0, "standardSolution": "$\\det(4 A^T B^{-1}) = 4^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 64 \\cdot 4 \\cdot \\frac{1}{3} = 256/3$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4^3 \\times (4/3) = 256/3$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 4", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 4"]}, {"id": "MAT-BNK-099", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 5$ และ $\\det(B) = 1$ ค่าของ $\\det(2 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["40", "10", "-40", "40"], "answer": 0, "standardSolution": "$\\det(2 A^T B^{-1}) = 2^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 8 \\cdot 5 \\cdot \\frac{1}{1} = 40$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times (5/1) = 40$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 2"]}, {"id": "MAT-BNK-100", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 2$ และ $\\det(B) = 2$ ค่าของ $\\det(3 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["27", "3", "-27", "54"], "answer": 0, "standardSolution": "$\\det(3 A^T B^{-1}) = 3^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 27 \\cdot 2 \\cdot \\frac{1}{2} = 27$", "shortcutSolution": "⚡ <b>Shortcut:</b> $3^3 \\times (2/2) = 27$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 3", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 3"]}, {"id": "MAT-BNK-101", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 3$ และ $\\det(B) = 3$ ค่าของ $\\det(4 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["64", "4", "-64", "192"], "answer": 0, "standardSolution": "$\\det(4 A^T B^{-1}) = 4^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 64 \\cdot 3 \\cdot \\frac{1}{3} = 64$", "shortcutSolution": "⚡ <b>Shortcut:</b> $4^3 \\times (3/3) = 64$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 4", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 4"]}, {"id": "MAT-BNK-102", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(kA), det(inverse), det(transpose)"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A, B$ เป็นเมทริกซ์มิติ $3 \\times 3$ โดย $\\det(A) = 4$ และ $\\det(B) = 1$ ค่าของ $\\det(2 A^T B^{-1})$ เท่ากับเท่าใด?", "choices": ["32", "8", "-32", "32"], "answer": 0, "standardSolution": "$\\det(2 A^T B^{-1}) = 2^3 \\cdot \\det(A) \\cdot \\frac{1}{\\det B} = 8 \\cdot 4 \\cdot \\frac{1}{1} = 32$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times (4/1) = 32$ ใน 5 วินาที", "concept": "การรวมสมบัติ $\\det(k A^T B^{-1}) = k^n \\frac{\\det A}{\\det B}$", "trap": "ลืมยกกำลัง 3 ให้ 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้ 2"]}, {"id": "MAT-BNK-103", "difficulty": 5, "topics": ["Adjoint", "Determinant"], "skills": ["det(adj A) with scalar"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint + det", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 5$ ค่าของ $\\det(2\\,\\text{adj}(A))$ เท่ากับเท่าใด?", "choices": ["200", "50", "25", "100"], "answer": 0, "standardSolution": "$\\det(2\\,\\text{adj}(A)) = 2^3 \\det(\\text{adj}(A)) = 8 \\cdot (5)^{3-1} = 8 \\cdot 25 = 200$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times 5^2 = 8 \\times 25 = 200$", "concept": "สมบัติ $\\det(k\\,\\text{adj}(A)) = k^n (\\det A)^{n-1}$", "trap": "ลืมยกกำลัง 3 ให้เลข 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-BNK-104", "difficulty": 5, "topics": ["Adjoint", "Determinant"], "skills": ["det(adj A) with scalar"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint + det", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 6$ ค่าของ $\\det(2\\,\\text{adj}(A))$ เท่ากับเท่าใด?", "choices": ["288", "72", "36", "144"], "answer": 0, "standardSolution": "$\\det(2\\,\\text{adj}(A)) = 2^3 \\det(\\text{adj}(A)) = 8 \\cdot (6)^{3-1} = 8 \\cdot 36 = 288$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times 6^2 = 8 \\times 36 = 288$", "concept": "สมบัติ $\\det(k\\,\\text{adj}(A)) = k^n (\\det A)^{n-1}$", "trap": "ลืมยกกำลัง 3 ให้เลข 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-BNK-105", "difficulty": 5, "topics": ["Adjoint", "Determinant"], "skills": ["det(adj A) with scalar"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint + det", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 2$ ค่าของ $\\det(2\\,\\text{adj}(A))$ เท่ากับเท่าใด?", "choices": ["32", "8", "4", "16"], "answer": 0, "standardSolution": "$\\det(2\\,\\text{adj}(A)) = 2^3 \\det(\\text{adj}(A)) = 8 \\cdot (2)^{3-1} = 8 \\cdot 4 = 32$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times 2^2 = 8 \\times 4 = 32$", "concept": "สมบัติ $\\det(k\\,\\text{adj}(A)) = k^n (\\det A)^{n-1}$", "trap": "ลืมยกกำลัง 3 ให้เลข 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-BNK-106", "difficulty": 5, "topics": ["Adjoint", "Determinant"], "skills": ["det(adj A) with scalar"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint + det", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 3$ ค่าของ $\\det(2\\,\\text{adj}(A))$ เท่ากับเท่าใด?", "choices": ["72", "18", "9", "36"], "answer": 0, "standardSolution": "$\\det(2\\,\\text{adj}(A)) = 2^3 \\det(\\text{adj}(A)) = 8 \\cdot (3)^{3-1} = 8 \\cdot 9 = 72$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times 3^2 = 8 \\times 9 = 72$", "concept": "สมบัติ $\\det(k\\,\\text{adj}(A)) = k^n (\\det A)^{n-1}$", "trap": "ลืมยกกำลัง 3 ให้เลข 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-BNK-107", "difficulty": 5, "topics": ["Adjoint", "Determinant"], "skills": ["det(adj A) with scalar"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint + det", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 4$ ค่าของ $\\det(2\\,\\text{adj}(A))$ เท่ากับเท่าใด?", "choices": ["128", "32", "16", "64"], "answer": 0, "standardSolution": "$\\det(2\\,\\text{adj}(A)) = 2^3 \\det(\\text{adj}(A)) = 8 \\cdot (4)^{3-1} = 8 \\cdot 16 = 128$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times 4^2 = 8 \\times 16 = 128$", "concept": "สมบัติ $\\det(k\\,\\text{adj}(A)) = k^n (\\det A)^{n-1}$", "trap": "ลืมยกกำลัง 3 ให้เลข 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-BNK-108", "difficulty": 5, "topics": ["Adjoint", "Determinant"], "skills": ["det(adj A) with scalar"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint + det", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 5$ ค่าของ $\\det(2\\,\\text{adj}(A))$ เท่ากับเท่าใด?", "choices": ["200", "50", "25", "100"], "answer": 0, "standardSolution": "$\\det(2\\,\\text{adj}(A)) = 2^3 \\det(\\text{adj}(A)) = 8 \\cdot (5)^{3-1} = 8 \\cdot 25 = 200$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times 5^2 = 8 \\times 25 = 200$", "concept": "สมบัติ $\\det(k\\,\\text{adj}(A)) = k^n (\\det A)^{n-1}$", "trap": "ลืมยกกำลัง 3 ให้เลข 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-BNK-109", "difficulty": 5, "topics": ["Adjoint", "Determinant"], "skills": ["det(adj A) with scalar"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint + det", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 6$ ค่าของ $\\det(2\\,\\text{adj}(A))$ เท่ากับเท่าใด?", "choices": ["288", "72", "36", "144"], "answer": 0, "standardSolution": "$\\det(2\\,\\text{adj}(A)) = 2^3 \\det(\\text{adj}(A)) = 8 \\cdot (6)^{3-1} = 8 \\cdot 36 = 288$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times 6^2 = 8 \\times 36 = 288$", "concept": "สมบัติ $\\det(k\\,\\text{adj}(A)) = k^n (\\det A)^{n-1}$", "trap": "ลืมยกกำลัง 3 ให้เลข 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-BNK-110", "difficulty": 5, "topics": ["Adjoint", "Determinant"], "skills": ["det(adj A) with scalar"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint + det", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 2$ ค่าของ $\\det(2\\,\\text{adj}(A))$ เท่ากับเท่าใด?", "choices": ["32", "8", "4", "16"], "answer": 0, "standardSolution": "$\\det(2\\,\\text{adj}(A)) = 2^3 \\det(\\text{adj}(A)) = 8 \\cdot (2)^{3-1} = 8 \\cdot 4 = 32$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times 2^2 = 8 \\times 4 = 32$", "concept": "สมบัติ $\\det(k\\,\\text{adj}(A)) = k^n (\\det A)^{n-1}$", "trap": "ลืมยกกำลัง 3 ให้เลข 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-BNK-111", "difficulty": 5, "topics": ["Adjoint", "Determinant"], "skills": ["det(adj A) with scalar"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint + det", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 3$ ค่าของ $\\det(2\\,\\text{adj}(A))$ เท่ากับเท่าใด?", "choices": ["72", "18", "9", "36"], "answer": 0, "standardSolution": "$\\det(2\\,\\text{adj}(A)) = 2^3 \\det(\\text{adj}(A)) = 8 \\cdot (3)^{3-1} = 8 \\cdot 9 = 72$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times 3^2 = 8 \\times 9 = 72$", "concept": "สมบัติ $\\det(k\\,\\text{adj}(A)) = k^n (\\det A)^{n-1}$", "trap": "ลืมยกกำลัง 3 ให้เลข 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-BNK-112", "difficulty": 5, "topics": ["Adjoint", "Determinant"], "skills": ["det(adj A) with scalar"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint + det", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 4$ ค่าของ $\\det(2\\,\\text{adj}(A))$ เท่ากับเท่าใด?", "choices": ["128", "32", "16", "64"], "answer": 0, "standardSolution": "$\\det(2\\,\\text{adj}(A)) = 2^3 \\det(\\text{adj}(A)) = 8 \\cdot (4)^{3-1} = 8 \\cdot 16 = 128$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times 4^2 = 8 \\times 16 = 128$", "concept": "สมบัติ $\\det(k\\,\\text{adj}(A)) = k^n (\\det A)^{n-1}$", "trap": "ลืมยกกำลัง 3 ให้เลข 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-BNK-113", "difficulty": 5, "topics": ["Adjoint", "Determinant"], "skills": ["det(adj A) with scalar"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint + det", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 5$ ค่าของ $\\det(2\\,\\text{adj}(A))$ เท่ากับเท่าใด?", "choices": ["200", "50", "25", "100"], "answer": 0, "standardSolution": "$\\det(2\\,\\text{adj}(A)) = 2^3 \\det(\\text{adj}(A)) = 8 \\cdot (5)^{3-1} = 8 \\cdot 25 = 200$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times 5^2 = 8 \\times 25 = 200$", "concept": "สมบัติ $\\det(k\\,\\text{adj}(A)) = k^n (\\det A)^{n-1}$", "trap": "ลืมยกกำลัง 3 ให้เลข 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-BNK-114", "difficulty": 5, "topics": ["Adjoint", "Determinant"], "skills": ["det(adj A) with scalar"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint + det", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 6$ ค่าของ $\\det(2\\,\\text{adj}(A))$ เท่ากับเท่าใด?", "choices": ["288", "72", "36", "144"], "answer": 0, "standardSolution": "$\\det(2\\,\\text{adj}(A)) = 2^3 \\det(\\text{adj}(A)) = 8 \\cdot (6)^{3-1} = 8 \\cdot 36 = 288$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times 6^2 = 8 \\times 36 = 288$", "concept": "สมบัติ $\\det(k\\,\\text{adj}(A)) = k^n (\\det A)^{n-1}$", "trap": "ลืมยกกำลัง 3 ให้เลข 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-BNK-115", "difficulty": 5, "topics": ["Adjoint", "Determinant"], "skills": ["det(adj A) with scalar"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint + det", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 2$ ค่าของ $\\det(2\\,\\text{adj}(A))$ เท่ากับเท่าใด?", "choices": ["32", "8", "4", "16"], "answer": 0, "standardSolution": "$\\det(2\\,\\text{adj}(A)) = 2^3 \\det(\\text{adj}(A)) = 8 \\cdot (2)^{3-1} = 8 \\cdot 4 = 32$", "shortcutSolution": "⚡ <b>Shortcut:</b> $2^3 \\times 2^2 = 8 \\times 4 = 32$", "concept": "สมบัติ $\\det(k\\,\\text{adj}(A)) = k^n (\\det A)^{n-1}$", "trap": "ลืมยกกำลัง 3 ให้เลข 2", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง 3 ให้เลข 2"]}, {"id": "MAT-EXM-096", "difficulty": 6, "topics": ["Inverse", "Determinant", "Transpose"], "skills": ["Combined determinant equation"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 20: Multiple concepts", "question": "กำหนดให้ $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ซึ่ง $\\det(A) = 3$ และ $B = 2A^T A^{-1}$ ค่าของ $\\det(B)$ เท่ากับเท่าใด?", "choices": ["8", "24", "1", "16"], "answer": 0, "standardSolution": "$\\det(B) = \\det(2 A^T A^{-1}) = 2^3 \\cdot \\det(A^T) \\cdot \\det(A^{-1}) = 8 \\cdot \\det(A) \\cdot \\frac{1}{\\det A} = 8 \\cdot 1 = 8$", "shortcutSolution": "⚡ <b>Shortcut:</b> $\\det(A^T) \\cdot \\det(A^{-1}) = \\det(A) \\cdot \\frac{1}{\\det A} = 1$ ตัดกันหมดเหลือแค่ $2^3 = 8$ ตอบใน 3 วินาที!", "concept": "สมบัติ $\\det(A^T A^{-1}) = 1$ สำหรับเมทริกซ์จัตุรัสที่มีอินเวิร์ส", "trap": "คิดว่าต้องเอา 3 มาคูณด้วย กลายเป็น 24", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["ลืมว่า det ตัดกันได้ 1"]}, {"id": "MAT-EXM-097", "difficulty": 5, "topics": ["Linear Equations", "Parameter"], "skills": ["Inconsistent System"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 17: Inconsistent system", "question": "ระบบสมการ $\\begin{cases} 3x - 6y = 5 \\\\ -x + 2y = k \\end{cases}$ จะ<b>ไม่มีคำตอบ</b> (Inconsistent) เมื่อ $k$ สอดคล้องกับเงื่อนไขใด?", "choices": ["$k \\neq -5/3$", "$k = -5/3$", "$k = 5/3$", "$k = 0$"], "answer": 0, "standardSolution": "คูณสมการที่ 2 ด้วย $-3$: $3x - 6y = -3k$<br>เทียบกับสมการที่ 1: ฝั่งซ้าย $3x - 6y$ เท่ากัน<br>ระบบจะไม่มีคำตอบเมื่อฝั่งขวาไม่เท่ากัน: $5 \\neq -3k \\Rightarrow k \\neq -5/3$", "shortcutSolution": "⚡ <b>Shortcut:</b> สมการขัดแย้งกัน: สัมประสิทธิ์เป็นสัดส่วนกันแต่ค่าคงที่คนละสัดส่วน: $-3k \\neq 5 \\Rightarrow k \\neq -5/3$", "concept": "เงื่อนไขระบบสมการที่ไม่มีคำตอบ", "trap": "สับสนระหว่างไม่มีคำตอบ ($k \\neq -5/3$) กับมีคำตอบมากมาย ($k = -5/3$)", "estimatedTime": 40, "hasPropertyShortcut": true, "killHints": ["สับสนเงื่อนไขไม่มีคำตอบ"]}, {"id": "MAT-EXM-098", "difficulty": 6, "topics": ["Adjoint", "Inverse"], "skills": ["Inverse of Adjoint"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 15: Adjoint inverse", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $3 \\times 3$ ที่มีอินเวิร์ส และ $\\det(A) = 4$ แล้ว $(\\text{adj}(A))^{-1}$ มีค่าเท่ากับเมทริกซ์ในข้อใด?", "choices": ["$\\frac{1}{4} A$", "$4A$", "$\\frac{1}{16} A$", "$A^{-1}$"], "answer": 0, "standardSolution": "จาก $A^{-1} = \\frac{1}{\\det A}\\text{adj}(A) \\Rightarrow \\text{adj}(A) = \\det(A) A^{-1}$<br>Take inverse ทั้งสองข้าง: $(\\text{adj}(A))^{-1} = (\\det(A) A^{-1})^{-1} = \\frac{1}{\\det A} (A^{-1})^{-1} = \\frac{1}{\\det A} A$<br>เนื่องจาก $\\det(A) = 4$ จะได้ $(\\text{adj}(A))^{-1} = \\frac{1}{4} A$", "shortcutSolution": "⚡ <b>Shortcut:</b> สูตรลัด: $(\\text{adj}(A))^{-1} = \\text{adj}(A^{-1}) = \\frac{A}{\\det A} = \\frac{1}{4}A$ ตอบข้อ A ทันที!", "concept": "สมบัติ $(\\text{adj}(A))^{-1} = \\frac{1}{\\det A} A$", "trap": "เอา 4 ไปคูณ $A$ แทนที่จะหาร", "estimatedTime": 45, "hasPropertyShortcut": true, "killHints": ["สลับเศษเป็นส่วน"]}, {"id": "MAT-EXM-099", "difficulty": 5, "topics": ["Determinant Properties"], "skills": ["det(A^2 + I) = 0"], "sourceType": "ORIGINAL-HARD", "sourcePlaylist": "BOTH", "sourcePattern": "PATTERN 09: Skew-symmetric det", "question": "ถ้า $A$ เป็นเมทริกซ์ปฏิสมมาตร (Skew-Symmetric) มิติ $3 \\times 3$ ($A^T = -A$) ข้อใดคือค่าของ $\\det(A)$ เสมอ?", "choices": ["0", "1", "-1", "หาค่าไม่ได้"], "answer": 0, "standardSolution": "จาก $A^T = -A$<br>Take determinant: $\\det(A^T) = \\det(-A)$<br>สำหรับเมทริกซ์มิติ $3 \\times 3$: $\\det(-A) = (-1)^3 \\det(A) = -\\det(A)$<br>และ $\\det(A^T) = \\det(A)$<br>ดังนั้น $\\det(A) = -\\det(A) \\Rightarrow 2\\det(A) = 0 \\Rightarrow \\det(A) = 0$", "shortcutSolution": "⚡ <b>Shortcut:</b> กฎทอง: 'เมทริกซ์ปฏิสมมาตรมิติเลขคี่ det เป็น 0 เสมอ!' ตอบ 0 ใน 1 วินาที!", "concept": "ทฤษฎีบท: เมทริกซ์ปฏิสมมาตรมิติคี่ (Odd-dimension skew-symmetric) มี determinant เท่ากับ 0 เสมอ", "trap": "คิดว่า $\\det(A) = 1$", "estimatedTime": 25, "hasPropertyShortcut": true, "killHints": ["ไม่รู้ทฤษฎีมิติคี่"]}, {"id": "MAT-EXM-100", "difficulty": 6, "topics": ["Matrix Multiplication", "Choice Elimination"], "skills": ["Corner element checking trick"], "sourceType": "SOURCE-INSPIRED", "sourcePlaylist": "PLAYLIST-2", "sourcePattern": "PATTERN 04: Partial check", "question": "กำหนดให้ $A = \\begin{bmatrix} 1 & 2 & 3 \\\\ 0 & 1 & 4 \\\\ 5 & 6 & 0 \\end{bmatrix}$ และ $B = \\begin{bmatrix} 2 & 0 & -1 \\\\ 1 & 3 & 2 \\\\ 0 & -2 & 1 \\end{bmatrix}$ สมาชิกแถวที่ 3 หลักที่ 1 ของเมทริกซ์ $AB$ คือข้อใด?", "choices": ["16", "10", "6", "12"], "answer": 0, "standardSolution": "สมาชิก $(AB)_{31} = (\\text{แถว 3 ของ } A) \\cdot (\\text{หลัก 1 ของ } B)$<br>$= \\begin{bmatrix} 5 & 6 & 0 \\end{bmatrix} \\begin{bmatrix} 2 \\\\ 1 \\\\ 0 \\end{bmatrix} = (5)(2) + (6)(1) + (0)(0) = 10 + 6 + 0 = 16$", "shortcutSolution": "⚡ <b>Shortcut (ตัดช้อยส์ด้วยสมาชิกมุม):</b> เล็งแถว 3 ชนหลัก 1: $5(2) + 6(1) + 0(0) = 16$ จบใน 5 วินาที!", "concept": "การคูณเมทริกซ์เฉพาะตำแหน่งที่ต้องการเพื่อประหยัดเวลาสอบ", "trap": "คูณทั้งเมทริกซ์ $3 \\times 3$ เสียเวลา 2 นาทีเต็ม", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["คำนวณครบ 9 ตำแหน่ง"]}, {"id": "MAT-EXM-101", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(AB) and det(kA)"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 09: det properties", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $2 \\times 2$ โดย $\\det(A) = 6$ แล้วค่าของ $\\det(3A)$ เท่ากับเท่าใด?", "choices": ["54", "18", "36", "162"], "answer": 0, "standardSolution": "สำหรับมิติ $2 \\times 2$: $\\det(3A) = 3^2 \\det(A) = 9 \\times 6 = 54$", "shortcutSolution": "⚡ <b>Shortcut:</b> มิติ 2 ดึง 3 ยกกำลัง 2: $9 \\times 6 = 54$", "concept": "สมบัติ $\\det(kA) = k^n \\det(A)$ สำหรับ $n=2$", "trap": "ลืมยกกำลัง 2 หรือยกกำลัง 3", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง n"]}, {"id": "MAT-EXM-102", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(AB) and det(kA)"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 09: det properties", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $2 \\times 2$ โดย $\\det(A) = 7$ แล้วค่าของ $\\det(3A)$ เท่ากับเท่าใด?", "choices": ["63", "21", "42", "189"], "answer": 0, "standardSolution": "สำหรับมิติ $2 \\times 2$: $\\det(3A) = 3^2 \\det(A) = 9 \\times 7 = 63$", "shortcutSolution": "⚡ <b>Shortcut:</b> มิติ 2 ดึง 3 ยกกำลัง 2: $9 \\times 7 = 63$", "concept": "สมบัติ $\\det(kA) = k^n \\det(A)$ สำหรับ $n=2$", "trap": "ลืมยกกำลัง 2 หรือยกกำลัง 3", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง n"]}, {"id": "MAT-EXM-103", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(AB) and det(kA)"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 09: det properties", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $2 \\times 2$ โดย $\\det(A) = 8$ แล้วค่าของ $\\det(3A)$ เท่ากับเท่าใด?", "choices": ["72", "24", "48", "216"], "answer": 0, "standardSolution": "สำหรับมิติ $2 \\times 2$: $\\det(3A) = 3^2 \\det(A) = 9 \\times 8 = 72$", "shortcutSolution": "⚡ <b>Shortcut:</b> มิติ 2 ดึง 3 ยกกำลัง 2: $9 \\times 8 = 72$", "concept": "สมบัติ $\\det(kA) = k^n \\det(A)$ สำหรับ $n=2$", "trap": "ลืมยกกำลัง 2 หรือยกกำลัง 3", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง n"]}, {"id": "MAT-EXM-104", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(AB) and det(kA)"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 09: det properties", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $2 \\times 2$ โดย $\\det(A) = 9$ แล้วค่าของ $\\det(3A)$ เท่ากับเท่าใด?", "choices": ["81", "27", "54", "243"], "answer": 0, "standardSolution": "สำหรับมิติ $2 \\times 2$: $\\det(3A) = 3^2 \\det(A) = 9 \\times 9 = 81$", "shortcutSolution": "⚡ <b>Shortcut:</b> มิติ 2 ดึง 3 ยกกำลัง 2: $9 \\times 9 = 81$", "concept": "สมบัติ $\\det(kA) = k^n \\det(A)$ สำหรับ $n=2$", "trap": "ลืมยกกำลัง 2 หรือยกกำลัง 3", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง n"]}, {"id": "MAT-EXM-105", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(AB) and det(kA)"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 09: det properties", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $2 \\times 2$ โดย $\\det(A) = 10$ แล้วค่าของ $\\det(3A)$ เท่ากับเท่าใด?", "choices": ["90", "30", "60", "270"], "answer": 0, "standardSolution": "สำหรับมิติ $2 \\times 2$: $\\det(3A) = 3^2 \\det(A) = 9 \\times 10 = 90$", "shortcutSolution": "⚡ <b>Shortcut:</b> มิติ 2 ดึง 3 ยกกำลัง 2: $9 \\times 10 = 90$", "concept": "สมบัติ $\\det(kA) = k^n \\det(A)$ สำหรับ $n=2$", "trap": "ลืมยกกำลัง 2 หรือยกกำลัง 3", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง n"]}, {"id": "MAT-EXM-106", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(AB) and det(kA)"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 09: det properties", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $2 \\times 2$ โดย $\\det(A) = 11$ แล้วค่าของ $\\det(3A)$ เท่ากับเท่าใด?", "choices": ["99", "33", "66", "297"], "answer": 0, "standardSolution": "สำหรับมิติ $2 \\times 2$: $\\det(3A) = 3^2 \\det(A) = 9 \\times 11 = 99$", "shortcutSolution": "⚡ <b>Shortcut:</b> มิติ 2 ดึง 3 ยกกำลัง 2: $9 \\times 11 = 99$", "concept": "สมบัติ $\\det(kA) = k^n \\det(A)$ สำหรับ $n=2$", "trap": "ลืมยกกำลัง 2 หรือยกกำลัง 3", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง n"]}, {"id": "MAT-EXM-107", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(AB) and det(kA)"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 09: det properties", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $2 \\times 2$ โดย $\\det(A) = 12$ แล้วค่าของ $\\det(3A)$ เท่ากับเท่าใด?", "choices": ["108", "36", "72", "324"], "answer": 0, "standardSolution": "สำหรับมิติ $2 \\times 2$: $\\det(3A) = 3^2 \\det(A) = 9 \\times 12 = 108$", "shortcutSolution": "⚡ <b>Shortcut:</b> มิติ 2 ดึง 3 ยกกำลัง 2: $9 \\times 12 = 108$", "concept": "สมบัติ $\\det(kA) = k^n \\det(A)$ สำหรับ $n=2$", "trap": "ลืมยกกำลัง 2 หรือยกกำลัง 3", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง n"]}, {"id": "MAT-EXM-108", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(AB) and det(kA)"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 09: det properties", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $2 \\times 2$ โดย $\\det(A) = 13$ แล้วค่าของ $\\det(3A)$ เท่ากับเท่าใด?", "choices": ["117", "39", "78", "351"], "answer": 0, "standardSolution": "สำหรับมิติ $2 \\times 2$: $\\det(3A) = 3^2 \\det(A) = 9 \\times 13 = 117$", "shortcutSolution": "⚡ <b>Shortcut:</b> มิติ 2 ดึง 3 ยกกำลัง 2: $9 \\times 13 = 117$", "concept": "สมบัติ $\\det(kA) = k^n \\det(A)$ สำหรับ $n=2$", "trap": "ลืมยกกำลัง 2 หรือยกกำลัง 3", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง n"]}, {"id": "MAT-EXM-109", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(AB) and det(kA)"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 09: det properties", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $2 \\times 2$ โดย $\\det(A) = 14$ แล้วค่าของ $\\det(3A)$ เท่ากับเท่าใด?", "choices": ["126", "42", "84", "378"], "answer": 0, "standardSolution": "สำหรับมิติ $2 \\times 2$: $\\det(3A) = 3^2 \\det(A) = 9 \\times 14 = 126$", "shortcutSolution": "⚡ <b>Shortcut:</b> มิติ 2 ดึง 3 ยกกำลัง 2: $9 \\times 14 = 126$", "concept": "สมบัติ $\\det(kA) = k^n \\det(A)$ สำหรับ $n=2$", "trap": "ลืมยกกำลัง 2 หรือยกกำลัง 3", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง n"]}, {"id": "MAT-EXM-110", "difficulty": 4, "topics": ["Determinant Properties"], "skills": ["det(AB) and det(kA)"], "sourceType": "OFFICIAL-CURRICULUM", "sourcePlaylist": "PLAYLIST-1", "sourcePattern": "PATTERN 09: det properties", "question": "ถ้า $A$ เป็นเมทริกซ์มิติ $2 \\times 2$ โดย $\\det(A) = 15$ แล้วค่าของ $\\det(3A)$ เท่ากับเท่าใด?", "choices": ["135", "45", "90", "405"], "answer": 0, "standardSolution": "สำหรับมิติ $2 \\times 2$: $\\det(3A) = 3^2 \\det(A) = 9 \\times 15 = 135$", "shortcutSolution": "⚡ <b>Shortcut:</b> มิติ 2 ดึง 3 ยกกำลัง 2: $9 \\times 15 = 135$", "concept": "สมบัติ $\\det(kA) = k^n \\det(A)$ สำหรับ $n=2$", "trap": "ลืมยกกำลัง 2 หรือยกกำลัง 3", "estimatedTime": 30, "hasPropertyShortcut": true, "killHints": ["ลืมยกกำลัง n"]}];
+
+    // Bulletproof Math & Matrix Formatter (Zero-Bug Engine)
+    function renderMathContent(s) {
+      if (!s) return '';
+
+      function renderInline(txt) {
+        if (!txt) return '';
+        // Fractions
+        txt = txt.replace(/\\+frac\{([^}]+)\}\{([^}]+)\}/g, '<span class="inline-flex flex-col text-center align-middle text-[11px] mx-1 leading-none"><span class="border-b border-cyan-400/80 px-1 pb-0.5 font-mono">$1</span><span class="pt-0.5 font-mono">$2</span></span>');
+        
+        // Superscripts
+        txt = txt.replace(/\^\{([^}]+)\}/g, '<sup>$1</sup>');
+        txt = txt.replace(/\^([0-9a-zA-Z\+\-]+)/g, '<sup>$1</sup>');
+
+        // Subscripts
+        txt = txt.replace(/_\{([^}]+)\}/g, '<sub>$1</sub>');
+        txt = txt.replace(/_([0-9a-zA-Z]+)/g, '<sub>$1</sub>');
+
+        // Operators & Greek
+        txt = txt.replace(/\\+det\b/g, '<span class="font-sans font-semibold text-cyan-300">det</span>');
+        txt = txt.replace(/\\+text\{adj\}/g, '<span class="font-sans font-semibold text-purple-300">adj</span>');
+        txt = txt.replace(/\\+text\{tr\}/g, '<span class="font-sans font-semibold text-amber-300">tr</span>');
+        txt = txt.replace(/\\+text\{diag\}/g, '<span class="font-sans font-semibold text-emerald-300">diag</span>');
+        txt = txt.replace(/\\+times\b/g, '×');
+        txt = txt.replace(/\\+pm\b/g, '±');
+        txt = txt.replace(/\\+ge\b/g, '≥');
+        txt = txt.replace(/\\+le\b/g, '≤');
+        txt = txt.replace(/\\+neq\b/g, '≠');
+        txt = txt.replace(/\\+Rightarrow\b/g, '⇒');
+        txt = txt.replace(/\\+mathbf\{0\}/g, '<strong class="font-mono text-slate-400">O</strong>');
+        txt = txt.replace(/\\+mathbf\{I\}/g, '<strong class="font-mono text-slate-300">I</strong>');
+        txt = txt.replace(/\\+lambda\b/g, 'λ');
+        txt = txt.replace(/\\+cdot\b/g, '·');
+        txt = txt.replace(/\\+quad\b/g, '&nbsp;&nbsp;');
+        txt = txt.replace(/\\+text\{([^}]+)\}/g, '$1');
+
+        return txt;
+      }
+
+      // 1. Systems of equations: cases
+      s = s.replace(/\\+begin\{cases\}(.*?)\\+end\{cases\}/gs, function(_, inner) {
+        const rows = inner.trim().split(/\\+/);
+        let items = '';
+        rows.forEach(r => {
+          if (r.trim()) {
+            items += '<div class="py-0.5 font-mono text-slate-200">' + renderInline(r.trim()) + '</div>';
+          }
+        });
+        return '<span class="inline-flex items-center align-middle my-1 mx-1.5"><span class="text-2xl font-light text-cyan-400 mr-1.5 leading-none">&#123;</span><span class="flex flex-col justify-center">' + items + '</span></span>';
+      });
+
+      // 2. Augmented matrix: array
+      s = s.replace(/\\+left\[\s*\\+begin\{array\}\{[^}]*\}(.*?)\\+end\{array\}\s*\\+right\]/gs, function(_, inner) {
+        const rows = inner.trim().split(/\\+/);
+        let trList = '';
+        rows.forEach(r => {
+          if (!r.trim()) return;
+          const cols = r.split('&').map(c => c.trim());
+          if (cols.length >= 2) {
+            let leftCols = '';
+            for (let i = 0; i < cols.length - 1; i++) {
+              leftCols += '<td class="px-2.5 py-1 text-center font-mono text-cyan-200">' + renderInline(cols[i]) + '</td>';
+            }
+            const rightCol = '<td class="px-2.5 py-1 text-center font-mono text-amber-300 border-l border-dashed border-slate-600 pl-3">' + renderInline(cols[cols.length - 1]) + '</td>';
+            trList += '<tr>' + leftCols + rightCol + '</tr>';
+          } else {
+            trList += '<tr><td class="px-2.5 py-1 text-center font-mono text-cyan-200">' + renderInline(cols[0]) + '</td></tr>';
+          }
+        });
+        return '<span class="math-matrix"><table class="math-matrix-table">' + trList + '</table></span>';
+      });
+
+      // 3. Standard bmatrix
+      s = s.replace(/\\+begin\{bmatrix\}(.*?)\\+end\{bmatrix\}/gs, function(_, inner) {
+        const rows = inner.trim().split(/\\+/);
+        let trList = '';
+        rows.forEach(r => {
+          if (!r.trim()) return;
+          const cols = r.split('&').map(c => c.trim());
+          let tds = '';
+          cols.forEach(c => {
+            tds += '<td class="px-2.5 py-1 text-center font-mono font-medium text-cyan-200">' + renderInline(c) + '</td>';
+          });
+          trList += '<tr>' + tds + '</tr>';
+        });
+        return '<span class="math-matrix"><table class="math-matrix-table">' + trList + '</table></span>';
+      });
+
+      // 4. Strip $ ... $ blocks
+      s = s.replace(/\$\$([^\$]+)\$\$/g, (_, inner) => renderInline(inner));
+      s = s.replace(/\$([^\$]+)\$/g, (_, inner) => renderInline(inner));
+
+      // 5. Clean any trailing loose tokens
+      s = renderInline(s);
+
+      return s;
+    }
+
+    const FORMULA_VAULT = [
+      {
+        title: "det(Aᵀ) = det(A)",
+        formula: "\det(A^T) = \det(A)",
+        whenToUse: "เมื่อโจทย์มีการทรานสโพสก่อนหา det เช่น det(2Aᵀ) หรือ det(Aᵀ B)",
+        shortcutPower: "ไม่ต้องเสียเวลาทรานสโพสสมาชิกในเมทริกซ์จริง! ค่าดีเทอร์มิแนนต์เท่ากับเดิมเสมอ",
+        examTrap: "บางคนเผลอคิดว่า Transpose จะทำให้เครื่องหมายเปลี่ยน หรือคิดเลขกลับหลัง"
+      },
+      {
+        title: "det(AB) = det(A)det(B)",
+        formula: "\det(AB) = \det(A) \cdot \det(B)",
+        whenToUse: "เมื่อโจทย์ถาม det ของผลคูณเมทริกซ์ 2 ตัวขึ้นไป",
+        shortcutPower: "ห้ามคูณเมทริกซ์จริงเด็ดขาด! ให้หา det แยกทีละตัวแล้วจับตัวเลขคูณกัน ประหยัดเวลา 90%",
+        examTrap: "แม้ว่า AB ≠ BA แต่ det(AB) = det(BA) เสมอ เพราะเป็นการคูณจำนวนจริง!"
+      },
+      {
+        title: "det(kA) = kⁿ det(A)",
+        formula: "\det(kA) = k^n \det(A) \quad (A \text{ มีมิติ } n \times n)",
+        whenToUse: "เมื่อมีการคูณค่าคงที่สเกลาร์ k เข้าไปในเมทริกซ์ทั้งแผงแล้วหา det",
+        shortcutPower: "ดึง k ออกมานอก det โดยยกกำลังตามมิติ n ของเมทริกซ์จัตุรัส",
+        examTrap: "กับดักอันดับ 1 ในข้อสอบ: ลืมยกกำลัง n (เช่น เมทริกซ์ 3x3 ดึง 2 ออกมาต้องเป็น 2³ = 8 ไม่ใช่ 2)"
+      },
+      {
+        title: "det(A⁻¹) = 1 / det(A)",
+        formula: "\det(A^{-1}) = \frac{1}{\det(A)} \quad (\det(A) \neq 0)",
+        whenToUse: "เมื่อโจทย์ถาม det ของอินเวิร์ส เช่น det(A⁻¹B) หรือ det(2A⁻¹)",
+        shortcutPower: "ไม่ต้องหาอินเวิร์สเมทริกซ์จริง! แค่เอา 1 ส่วน det ของเมทริกซ์เดิม",
+        examTrap: "อย่าลืมเงื่อนไข det(A) ≠ 0 ถ้า det เป็น 0 เมทริกซ์จะไม่มีอินเวิร์สทันที"
+      },
+      {
+        title: "det(adj(A)) = (det A)ⁿ⁻¹",
+        formula: "\det(\text{adj}(A)) = (\det A)^{n-1}",
+        whenToUse: "เมื่อโจทย์ถาม det ของ Adjoint เมทริกซ์",
+        shortcutPower: "จำสูตรลัด (n-1): สำหรับ 3x3 จะได้ (det A)², สำหรับ Adjoint 2 ชั้นได้ (det A)^{(n-1)²}",
+        examTrap: "สับสนกับ det(kA) แล้วลืมลบ 1 ออกจากเลขชี้กำลัง"
+      },
+      {
+        title: "A · adj(A) = det(A) · I",
+        formula: "A \cdot \text{adj}(A) = \text{adj}(A) \cdot A = \det(A) \cdot I_n",
+        whenToUse: "เมื่อพบสมการเมทริกซ์ที่ A คูณกับ adj(A)",
+        shortcutPower: "ผลลัพธ์คือเมทริกซ์สเกลาร์ที่มีสมาชิกบนเส้นทแยงมุมเท่ากับ det(A) ตอบได้ทันทีโดยไม่ต้องคำนวณ",
+        examTrap: "เผลอไปหา det ของฝั่งขวาแล้วคิดว่าได้ (det A)ⁿ"
+      },
+      {
+        title: "สูตรลัดอินเวิร์ส 2×2",
+        formula: "\begin{bmatrix} a & b \\ c & d \end{bmatrix}^{-1} = \frac{1}{ad-bc}\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}",
+        whenToUse: "หาอินเวิร์สของเมทริกซ์ขนาด 2x2",
+        shortcutPower: "ท่องจำ: 'ทแยงหลักสลับที่ ทแยงรองเปลี่ยนเครื่องหมาย หารด้วย det'",
+        examTrap: "สลับที่เส้นทแยงมุมรอง หรือลืมเปลี่ยนเครื่องหมาย"
+      },
+      {
+        title: "ผลของ ERO ต่อ Determinant",
+        formula: "R_i \leftrightarrow R_j \Rightarrow -\det, \quad cR_i \Rightarrow c\det, \quad R_i + cR_j \Rightarrow \det",
+        whenToUse: "โจทย์ที่มีการแปลงแถวหลายขั้นตอนแล้วถาม det เมทริกซ์ใหม่",
+        shortcutPower: "จำกฎทอง: การบวกพหุคูณแถว (R_i + cR_j) ไม่เปลี่ยนค่า det เลย! นับแค่จำนวนการสลับแถวและการคูณค่าคงที่",
+        examTrap: "คิดว่าการบวก 3R₂ เข้าแถว 1 ต้องเอา 3 ไปคูณ det ด้วย ซึ่งผิดมหันต์!"
+      }
+    ];
+
+    const STORAGE_KEY = 'matrix_hunter_data_v1';
+    let appState = {
+      solved: {},
+      errorCounts: {
+        "DET PROPERTY": 0,
+        "MATRIX MULTIPLICATION": 0,
+        "TRANSPOSE": 0,
+        "INVERSE & ADJOINT": 0,
+        "ROW OPERATION": 0,
+        "PARAMETER SOLVING": 0
+      },
+      bookmarks: [],
+      mockHistory: [],
+      currentPracticeFilter: { diff: 'all', topic: 'all' },
+      practiceIndex: 0,
+      filteredQueue: [],
+      killState: {}
+    };
+
+    function loadState() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          appState = Object.assign(appState, parsed);
+        } catch(e) {}
+      }
+      updateGlobalStats();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch(e) {}
+      updateGlobalStats();
+    }
+
+    function updateGlobalStats() {
+      const solvedIds = Object.keys(appState.solved);
+      const solvedCount = solvedIds.length;
+      let correctCount = 0;
+      solvedIds.forEach(id => {
+        if (appState.solved[id].correct) correctCount++;
+      });
+      const acc = solvedCount > 0 ? Math.round((correctCount / solvedCount) * 100) : 0;
+
+      document.getElementById('solvedCount').innerText = solvedCount;
+      document.getElementById('overallAccuracy').innerText = `${acc}%`;
+    }
+
+    function switchTab(tabId) {
+      playTone('click');
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.nav-tab').forEach(el => {
+        el.classList.remove('bg-cyan-600', 'text-white', 'shadow-sm', 'shadow-cyan-500/30');
+        el.classList.add('text-slate-400', 'hover:text-white', 'hover:bg-slate-800');
+      });
+
+      const targetTab = document.getElementById(`tab-${tabId}`);
+      const targetNav = document.getElementById(`nav-${tabId}`);
+      if (targetTab) targetTab.classList.remove('hidden');
+      if (targetNav) {
+        targetNav.classList.remove('text-slate-400', 'hover:text-white', 'hover:bg-slate-800');
+        targetNav.classList.add('bg-cyan-600', 'text-white', 'shadow-sm', 'shadow-cyan-500/30');
+      }
+
+      if (tabId === 'practice') {
+        renderCurrentPracticeQuestion();
+      } else if (tabId === 'weakness') {
+        renderWeaknessLab();
+      } else if (tabId === 'boss') {
+        renderBossMode();
+      } else if (tabId === 'blueprint') {
+        renderBlueprint();
+      }
+    }
+
+    function applyFilters() {
+      const diff = document.getElementById('diffFilter').value;
+      const topic = document.getElementById('topicFilter').value;
+      appState.currentPracticeFilter = { diff, topic };
+
+      appState.filteredQueue = QUESTION_BANK.filter(q => {
+        const matchDiff = (diff === 'all') || (q.difficulty.toString() === diff);
+        const matchTopic = (topic === 'all') || (q.topics && q.topics.some(t => t.toLowerCase().includes(topic.toLowerCase())));
+        return matchDiff && matchTopic;
+      });
+
+      if (appState.filteredQueue.length === 0) {
+        appState.filteredQueue = [...QUESTION_BANK];
+      }
+
+      appState.practiceIndex = 0;
+      renderCurrentPracticeQuestion();
+    }
+
+    function renderCurrentPracticeQuestion() {
+      if (appState.filteredQueue.length === 0) {
+        applyFilters();
+        return;
+      }
+      const q = appState.filteredQueue[appState.practiceIndex];
+      const container = document.getElementById('practiceQuestionContainer');
+      const badge = document.getElementById('questionIndexBadge');
+      badge.innerText = `QUESTION ${appState.practiceIndex + 1} / ${appState.filteredQueue.length}`;
+
+      const isSolved = appState.solved[q.id];
+      const kills = appState.killState[q.id] || {};
+
+      let diffBadge = '';
+      if (q.difficulty === 1) diffBadge = '<span class="px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 text-xs font-semibold">LEVEL 1: พื้นฐาน</span>';
+      else if (q.difficulty === 2) diffBadge = '<span class="px-2.5 py-0.5 rounded-full bg-blue-950 text-blue-400 border border-blue-800 text-xs font-semibold">LEVEL 2: คำนวณ</span>';
+      else if (q.difficulty === 3) diffBadge = '<span class="px-2.5 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 text-xs font-semibold">LEVEL 3: สมบัติ</span>';
+      else if (q.difficulty === 4) diffBadge = '<span class="px-2.5 py-0.5 rounded-full bg-purple-950 text-purple-400 border border-purple-800 text-xs font-semibold">LEVEL 4: ประยุกต์</span>';
+      else if (q.difficulty === 5) diffBadge = '<span class="px-2.5 py-0.5 rounded-full bg-pink-950 text-pink-400 border border-pink-800 text-xs font-semibold">LEVEL 5: หลายสมบัติ</span>';
+      else diffBadge = '<span class="px-2.5 py-0.5 rounded-full bg-rose-950 text-rose-400 border border-rose-800 text-xs font-semibold animate-pulse">LEVEL 6: EXAM KILLER</span>';
+
+      let propertyFirstHtml = '';
+      if (q.hasPropertyShortcut || (q.topics && q.topics.includes('Determinant Properties'))) {
+        propertyFirstHtml = `
+          <div class="p-3.5 rounded-2xl bg-cyan-950/60 border border-cyan-500/50 flex items-start space-x-3 text-cyan-200 glow-cyan">
+            <span class="text-xl mt-0.5">🧠</span>
+            <div class="text-xs md:text-sm">
+              <strong class="font-bold text-cyan-400 uppercase tracking-wide">PROPERTY FIRST ALERT:</strong>
+              <span class="ml-1">อย่าเพิ่งตั้งหน้าตั้งตาคำนวณ! ข้อนี้มีสมบัติหรือทางลัดที่ช่วยทุ่นแรงได้ ลองสังเกตก่อนเริ่มทดเลข</span>
+            </div>
+          </div>
+        `;
+      }
+
+      const choiceLabels = ['A', 'B', 'C', 'D', 'E'];
+      let choicesHtml = '';
+      q.choices.forEach((choice, idx) => {
+        const isKilled = kills[idx];
+        const isSelected = isSolved && isSolved.chosen === idx;
+        const isCorrect = isSolved && q.answer === idx;
+        const isWrongSelection = isSolved && isSelected && !isSolved.correct;
+
+        let itemStyle = 'border-slate-800 bg-slate-900/60 hover:border-slate-700';
+        if (isSelected && !isSolved) itemStyle = 'border-cyan-500 bg-cyan-950/30';
+        if (isSolved) {
+          if (isCorrect) itemStyle = 'border-emerald-500 bg-emerald-950/40 text-emerald-200';
+          else if (isWrongSelection) itemStyle = 'border-rose-500 bg-rose-950/40 text-rose-200';
+          else if (isKilled) itemStyle += ' opacity-30';
+        } else if (isKilled) {
+          itemStyle += ' strike-killed';
+        }
+
+        choicesHtml += `
+          <div class="relative group">
+            <button onclick="handleChoiceClick(${idx})" ${isSolved ? 'disabled' : ''} class="w-full text-left p-4 rounded-2xl border ${itemStyle} transition flex items-center justify-between text-sm md:text-base">
+              <div class="flex items-center space-x-3.5">
+                <span class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-mono font-bold text-xs ${isCorrect ? 'bg-emerald-600 text-white' : (isWrongSelection ? 'bg-rose-600 text-white' : 'text-slate-300')}">
+                  ${choiceLabels[idx]}
+                </span>
+                <span class="font-medium ${isKilled ? 'line-through text-slate-500' : 'text-slate-100'}">${renderMathContent(choice)}</span>
+              </div>
+
+              ${isKilled ? `<span class="text-[10px] px-2.5 py-1 rounded-lg bg-rose-950 text-rose-400 border border-rose-800/80 font-mono">ตัดทิ้ง: ${isKilled}</span>` : ''}
+            </button>
+
+            ${!isSolved ? `
+              <button onclick="openKillModal(${idx}, event)" class="absolute right-3 top-1/2 -translate-y-1/2 px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-rose-950/80 border border-slate-700 hover:border-rose-700 text-slate-400 hover:text-rose-300 text-xs transition md:opacity-0 group-hover:opacity-100 shadow-sm" title="ตัดช้อยส์นี้">
+                ⚔️ ตัดช้อยส์
+              </button>
+            ` : ''}
+          </div>
+        `;
+      });
+
+      let solutionBlockHtml = '';
+      if (isSolved) {
+        const isRight = isSolved.correct;
+        solutionBlockHtml = `
+          <div class="p-6 rounded-2xl ${isRight ? 'bg-emerald-950/40 border border-emerald-800/70' : 'bg-rose-950/40 border border-rose-800/70'} space-y-5">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-2.5">
+                <span class="text-2xl">${isRight ? '✓' : '✗'}</span>
+                <span class="text-lg font-bold ${isRight ? 'text-emerald-400' : 'text-rose-400'}">
+                  ${isRight ? 'CORRECT! ยอดเยี่ยมมาก' : 'INCORRECT! ข้อนี้มีจุดกับดักที่ต้องระวัง'}
+                </span>
+              </div>
+              <span class="text-xs font-mono text-slate-400">เฉลยข้อ ${choiceLabels[q.answer]}</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs md:text-sm">
+              <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2">
+                <div class="font-bold text-slate-300 flex items-center space-x-1.5 border-b border-slate-800 pb-2">
+                  <span>📝</span><span>STANDARD METHOD (วิธีทำปกติ)</span>
+                </div>
+                <div class="text-slate-300 leading-relaxed">${renderMathContent(q.standardSolution)}</div>
+              </div>
+
+              <div class="bg-slate-900 p-4 rounded-xl border border-cyan-900/50 space-y-2">
+                <div class="font-bold text-cyan-400 flex items-center space-x-1.5 border-b border-cyan-900/60 pb-2">
+                  <span>⚡</span><span>SHORTCUT METHOD (วิธีคิดเร็วข้อสอบ)</span>
+                </div>
+                <div class="text-cyan-100 leading-relaxed">${renderMathContent(q.shortcutSolution)}</div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+              <div class="p-3.5 rounded-xl bg-purple-950/30 border border-purple-900/40 space-y-1">
+                <strong class="text-purple-300 flex items-center space-x-1"><span>🎯</span><span>จุดที่ข้อสอบกำลังวัด (Concept):</span></strong>
+                <p class="text-slate-300">${q.concept}</p>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-amber-950/30 border border-amber-900/40 space-y-1">
+                <strong class="text-amber-300 flex items-center space-x-1"><span>⚠️</span><span>กับดักที่คนออกข้อสอบวางไว้ (Exam Trap):</span></strong>
+                <p class="text-slate-300">${q.trap}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      container.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center space-x-2">
+            ${diffBadge}
+            <span class="text-xs font-mono text-cyan-400 bg-cyan-950 px-2.5 py-0.5 rounded-lg border border-cyan-900/60">ID: ${q.id}</span>
+            <span class="text-xs text-slate-400 bg-slate-800 px-2.5 py-0.5 rounded-lg">${q.sourcePattern}</span>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="toggleBookmark('${q.id}')" class="text-xs text-slate-400 hover:text-amber-400 px-2.5 py-1 rounded-lg bg-slate-800">
+              ${appState.bookmarks.includes(q.id) ? '★ Bookmarked' : '☆ Bookmark'}
+            </button>
+          </div>
+        </div>
+
+        ${propertyFirstHtml}
+
+        <div class="text-base md:text-lg text-white font-medium leading-relaxed bg-slate-950/70 p-5 rounded-2xl border border-slate-800">
+          ${renderMathContent(q.question)}
+        </div>
+
+        <div class="space-y-3">
+          ${choicesHtml}
+        </div>
+
+        <div class="flex items-center justify-between pt-2">
+          <div class="text-xs text-slate-400">
+            ${isSolved ? '<span class="text-cyan-400">คลิก "ข้อถัดไป" เพื่อลุยข้อใหม่</span>' : 'คลิกตัวเลือกเพื่อตรวจคำตอบทันที หรือกดตัดช้อยส์ด้วย [⚔️ ตัดช้อยส์]'}
+          </div>
+
+          <div class="flex items-center space-x-3">
+            <button onclick="nextQuestion()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-500 hover:to-purple-500 text-white font-bold text-sm shadow-md transition">
+              ${isSolved ? 'ข้อถัดไป (NEXT) →' : 'ข้ามข้อนี้ →'}
+            </button>
+          </div>
+        </div>
+
+        ${solutionBlockHtml}
+      `;
+    }
+
+    function handleChoiceClick(chosenIdx) {
+      const q = appState.filteredQueue[appState.practiceIndex];
+      if (appState.solved[q.id]) return;
+
+      const isCorrect = (chosenIdx === q.answer);
+      appState.solved[q.id] = {
+        correct: isCorrect,
+        chosen: chosenIdx,
+        time: new Date().toISOString()
+      };
+
+      if (isCorrect) {
+        playTone('correct');
+      } else {
+        playTone('incorrect');
+        categorizeAndRecordError(q);
+      }
+
+      saveState();
+      renderCurrentPracticeQuestion();
+    }
+
+    function categorizeAndRecordError(q) {
+      const topic = (q.topics && q.topics[0]) || '';
+      if (topic.includes('Determinant')) appState.errorCounts['DET PROPERTY']++;
+      else if (topic.includes('Multiplication')) appState.errorCounts['MATRIX MULTIPLICATION']++;
+      else if (topic.includes('Transpose')) appState.errorCounts['TRANSPOSE']++;
+      else if (topic.includes('Inverse') || topic.includes('Adjoint')) appState.errorCounts['INVERSE & ADJOINT']++;
+      else if (topic.includes('Row Operations')) appState.errorCounts['ROW OPERATION']++;
+      else appState.errorCounts['PARAMETER SOLVING']++;
+    }
+
+    function prevQuestion() {
+      if (appState.practiceIndex > 0) {
+        appState.practiceIndex--;
+        playTone('click');
+        renderCurrentPracticeQuestion();
+      }
+    }
+
+    function nextQuestion() {
+      if (appState.practiceIndex < appState.filteredQueue.length - 1) {
+        appState.practiceIndex++;
+      } else {
+        appState.practiceIndex = 0;
+      }
+      playTone('click');
+      renderCurrentPracticeQuestion();
+    }
+
+    function toggleBookmark(qId) {
+      if (appState.bookmarks.includes(qId)) {
+        appState.bookmarks = appState.bookmarks.filter(id => id !== qId);
+      } else {
+        appState.bookmarks.push(qId);
+      }
+      saveState();
+      renderCurrentPracticeQuestion();
+    }
+
+    let activeKillModalChoice = null;
+
+    function openKillModal(choiceIdx, event) {
+      if (event) event.stopPropagation();
+      activeKillModalChoice = choiceIdx;
+      document.getElementById('killChoiceModal').classList.remove('hidden');
+      playTone('click');
+    }
+
+    function closeKillChoiceModal() {
+      document.getElementById('killChoiceModal').classList.add('hidden');
+      activeKillModalChoice = null;
+    }
+
+    function applyKillReason(reason) {
+      if (activeKillModalChoice === null) return;
+      const q = appState.filteredQueue[appState.practiceIndex];
+      if (!appState.killState[q.id]) appState.killState[q.id] = {};
+      appState.killState[q.id][activeKillModalChoice] = reason;
+
+      playTone('click');
+      closeKillChoiceModal();
+      saveState();
+      renderCurrentPracticeQuestion();
+    }
+
+    function clearKillOnSelectedChoice() {
+      if (activeKillModalChoice === null) return;
+      const q = appState.filteredQueue[appState.practiceIndex];
+      if (appState.killState[q.id]) {
+        delete appState.killState[q.id][activeKillModalChoice];
+      }
+      playTone('click');
+      closeKillChoiceModal();
+      saveState();
+      renderCurrentPracticeQuestion();
+    }
+
+    function openQuestionDrawer() {
+      const modal = document.getElementById('questionDrawerModal');
+      const grid = document.getElementById('drawerQuestionsGrid');
+      let html = '';
+      appState.filteredQueue.forEach((q, idx) => {
+        const isSolved = appState.solved[q.id];
+        let style = 'bg-slate-800 text-slate-400 border-slate-700';
+        if (isSolved) {
+          style = isSolved.correct ? 'bg-emerald-950 text-emerald-300 border-emerald-700' : 'bg-rose-950 text-rose-300 border-rose-700';
+        }
+        if (appState.practiceIndex === idx) {
+          style += ' ring-2 ring-cyan-400 font-bold';
+        }
+        html += `<button onclick="jumpToPractice(${idx})" class="p-2 rounded-xl text-xs font-mono border ${style} flex flex-col items-center justify-center transition"><span>${idx+1}</span></button>`;
+      });
+      grid.innerHTML = html;
+      modal.classList.remove('hidden');
+    }
+
+    function closeQuestionDrawer() {
+      document.getElementById('questionDrawerModal').classList.add('hidden');
+    }
+
+    function jumpToPractice(idx) {
+      appState.practiceIndex = idx;
+      closeQuestionDrawer();
+      renderCurrentPracticeQuestion();
+    }
+
+    function renderWeaknessLab() {
+      const grid = document.getElementById('weaknessCardsGrid');
+      const counts = appState.errorCounts;
+      let html = '';
+
+      const icons = {
+        "DET PROPERTY": "🧠",
+        "MATRIX MULTIPLICATION": "✖️",
+        "TRANSPOSE": "🔄",
+        "INVERSE & ADJOINT": "🔀",
+        "ROW OPERATION": "🪜",
+        "PARAMETER SOLVING": "📐"
+      };
+
+      let maxErrorCat = null;
+      let maxErrorCount = -1;
+
+      for (const [cat, count] of Object.entries(counts)) {
+        if (count > maxErrorCount) {
+          maxErrorCount = count;
+          maxErrorCat = cat;
+        }
+        html += `
+          <div class="bg-slate-950 p-5 rounded-2xl border ${count > 3 ? 'border-rose-900/80 bg-rose-950/10' : 'border-slate-800'} space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xl">${icons[cat] || '📌'}</span>
+              <span class="font-mono text-xs px-2.5 py-0.5 rounded-full ${count > 3 ? 'bg-rose-950 text-rose-400 border border-rose-800' : 'bg-slate-800 text-slate-300'}">
+                ผิด ${count} ครั้ง
+              </span>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm text-slate-100">${cat}</h4>
+              <p class="text-xs text-slate-400 mt-1">
+                ${count === 0 ? 'ยังไม่มีข้อผิดพลาด ยอดเยี่ยมมาก!' : 'ควรระวังเรื่องการสับสนนิยามและการแทนค่า'}
+              </p>
+            </div>
+          </div>
+        `;
+      }
+      grid.innerHTML = html;
+
+      const advice = document.getElementById('weaknessAdvice');
+      if (maxErrorCount > 0) {
+        advice.innerHTML = `จากการวิเคราะห์ข้อสอบที่ผ่านมา คุณทำผิดในหมวด <strong class="text-rose-400">${maxErrorCat}</strong> บ่อยที่สุด (${maxErrorCount} ครั้ง) แนะนำให้กดปุ่ม <strong>TRAIN MY WEAKNESS</strong> เพื่อฝึกทำโจทย์เน้นหมวดนี้โดยเฉพาะ และเปิดทบทวนสมบัติใน <strong>Formula Vault</strong> ประกอบการคิด!`;
+      } else {
+        advice.innerText = 'ระบบยังไม่พบจุดอ่อนที่ชัดเจน ลองฝึกทำข้อสอบเพิ่มเติมเพื่อค้นหาจุดที่ยังไม่แม่นยำ!';
+      }
+    }
+
+    function trainMyWeakness() {
+      let maxCat = 'DET PROPERTY';
+      let maxVal = -1;
+      for (const [cat, count] of Object.entries(appState.errorCounts)) {
+        if (count > maxVal) {
+          maxVal = count;
+          maxCat = cat;
+        }
+      }
+
+      appState.filteredQueue = QUESTION_BANK.filter(q => {
+        const topic = (q.topics && q.topics[0]) || '';
+        if (maxCat === 'DET PROPERTY') return topic.includes('Determinant');
+        if (maxCat === 'MATRIX MULTIPLICATION') return topic.includes('Multiplication');
+        if (maxCat === 'TRANSPOSE') return topic.includes('Transpose');
+        if (maxCat === 'INVERSE & ADJOINT') return topic.includes('Inverse') || topic.includes('Adjoint');
+        if (maxCat === 'ROW OPERATION') return topic.includes('Row Operations');
+        return topic.includes('Parameter');
+      });
+
+      if (appState.filteredQueue.length === 0) {
+        appState.filteredQueue = [...QUESTION_BANK];
+      }
+
+      appState.practiceIndex = 0;
+      switchTab('practice');
+    }
+
+    let mockExamState = {
+      active: false,
+      questions: [],
+      currentIndex: 0,
+      answers: {},
+      timerInterval: null,
+      timeRemaining: 0,
+      totalSeconds: 0
+    };
+
+    function startMockExam() {
+      playTone('click');
+      const lengthChoice = parseInt(document.querySelector('input[name="mockLength"]:checked').value);
+      const shuffled = [...QUESTION_BANK].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, lengthChoice);
+
+      mockExamState.active = true;
+      mockExamState.questions = selected;
+      mockExamState.currentIndex = 0;
+      mockExamState.answers = {};
+      mockExamState.totalSeconds = lengthChoice * 90;
+      mockExamState.timeRemaining = mockExamState.totalSeconds;
+
+      document.getElementById('mockConfigScreen').classList.add('hidden');
+      document.getElementById('mockResultScreen').classList.add('hidden');
+      document.getElementById('mockActiveScreen').classList.remove('hidden');
+
+      startTimer();
+      renderMockQuestion();
+    }
+
+    function startTimer() {
+      if (mockExamState.timerInterval) clearInterval(mockExamState.timerInterval);
+      mockExamState.timerInterval = setInterval(() => {
+        mockExamState.timeRemaining--;
+        updateTimerDisplay();
+        if (mockExamState.timeRemaining <= 0) {
+          clearInterval(mockExamState.timerInterval);
+          finishMockExam();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const m = Math.floor(mockExamState.timeRemaining / 60);
+      const s = mockExamState.timeRemaining % 60;
+      const str = `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+      document.getElementById('mockTimerDisplay').innerText = str;
+    }
+
+    function renderMockQuestion() {
+      const q = mockExamState.questions[mockExamState.currentIndex];
+      const box = document.getElementById('mockQuestionBox');
+      const idxBadge = document.getElementById('mockCurrentIndex');
+      idxBadge.innerText = `QUESTION ${mockExamState.currentIndex + 1} / ${mockExamState.questions.length}`;
+
+      renderMockNavGrid();
+
+      const choiceLabels = ['A', 'B', 'C', 'D', 'E'];
+      let choicesHtml = '';
+      q.choices.forEach((choice, idx) => {
+        const isSelected = mockExamState.answers[q.id] === idx;
+        choicesHtml += `
+          <button onclick="selectMockChoice(${idx})" class="w-full text-left p-4 rounded-2xl border ${isSelected ? 'border-cyan-500 bg-cyan-950/40 text-cyan-200' : 'border-slate-800 bg-slate-900/60 hover:border-slate-700'} transition flex items-center space-x-3.5 text-sm md:text-base">
+            <span class="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center font-mono font-bold text-xs ${isSelected ? 'bg-cyan-600 text-white' : 'text-slate-300'}">
+              ${choiceLabels[idx]}
+            </span>
+            <span class="font-medium text-slate-100">${renderMathContent(choice)}</span>
+          </button>
+        `;
+      });
+
+      box.innerHTML = `
+        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+          <span class="text-xs font-mono text-cyan-400">LEVEL ${q.difficulty} | ${q.sourcePattern}</span>
+          <span class="text-xs text-slate-400">โหมดสอบเสมือนจริง (ไม่มีเฉลยระหว่างทำ)</span>
+        </div>
+
+        <div class="text-base md:text-lg text-white font-medium leading-relaxed bg-slate-950/60 p-5 rounded-2xl border border-slate-800">
+          ${renderMathContent(q.question)}
+        </div>
+
+        <div class="space-y-3">
+          ${choicesHtml}
+        </div>
+
+        <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+          <button onclick="prevMockQuestion()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">
+            ← ข้อก่อนหน้า
+          </button>
+          <button onclick="nextMockQuestion()" class="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-xs font-semibold text-white">
+            ข้อถัดไป →
+          </button>
+        </div>
+      `;
+    }
+
+    function renderMockNavGrid() {
+      const grid = document.getElementById('mockQuestionGrid');
+      let html = '';
+      mockExamState.questions.forEach((q, idx) => {
+        const isAnswered = mockExamState.answers[q.id] !== undefined;
+        const isCurrent = mockExamState.currentIndex === idx;
+        let style = 'bg-slate-800 text-slate-400 border-slate-700';
+        if (isAnswered) style = 'bg-cyan-900/60 text-cyan-300 border-cyan-700';
+        if (isCurrent) style = 'ring-2 ring-purple-500 bg-purple-900/60 text-white font-bold';
+        html += `<button onclick="jumpToMockQuestion(${idx})" class="w-8 h-8 rounded-lg text-xs font-mono border ${style} flex items-center justify-center transition">${idx + 1}</button>`;
+      });
+      grid.innerHTML = html;
+    }
+
+    function selectMockChoice(idx) {
+      const q = mockExamState.questions[mockExamState.currentIndex];
+      mockExamState.answers[q.id] = idx;
+      playTone('click');
+      renderMockQuestion();
+    }
+
+    function prevMockQuestion() {
+      if (mockExamState.currentIndex > 0) {
+        mockExamState.currentIndex--;
+        renderMockQuestion();
+      }
+    }
+
+    function nextMockQuestion() {
+      if (mockExamState.currentIndex < mockExamState.questions.length - 1) {
+        mockExamState.currentIndex++;
+        renderMockQuestion();
+      }
+    }
+
+    function jumpToMockQuestion(idx) {
+      mockExamState.currentIndex = idx;
+      renderMockQuestion();
+    }
+
+    function submitMockExamEarly() {
+      const answeredCount = Object.keys(mockExamState.answers).length;
+      const total = mockExamState.questions.length;
+      if (confirm(`คุณตอบไปแล้ว ${answeredCount} จาก ${total} ข้อ ต้องการส่งข้อสอบและดูผลการประเมินทันทีหรือไม่?`)) {
+        clearInterval(mockExamState.timerInterval);
+        finishMockExam();
+      }
+    }
+
+    function finishMockExam() {
+      mockExamState.active = false;
+      document.getElementById('mockActiveScreen').classList.add('hidden');
+      const resultScreen = document.getElementById('mockResultScreen');
+      resultScreen.classList.remove('hidden');
+
+      let correctCount = 0;
+      const total = mockExamState.questions.length;
+      mockExamState.questions.forEach(q => {
+        const userChoice = mockExamState.answers[q.id];
+        if (userChoice === q.answer) correctCount++;
+        appState.solved[q.id] = {
+          correct: (userChoice === q.answer),
+          chosen: userChoice,
+          time: new Date().toISOString()
+        };
+        if (userChoice !== q.answer) categorizeAndRecordError(q);
+      });
+
+      saveState();
+
+      const scorePercent = Math.round((correctCount / total) * 100);
+      const timeSpentSec = mockExamState.totalSeconds - mockExamState.timeRemaining;
+      const avgSec = Math.round(timeSpentSec / total);
+
+      let badgeTitle = 'Matrix Warrior';
+      if (scorePercent >= 80) badgeTitle = 'Matrix Master';
+      else if (scorePercent >= 60) badgeTitle = 'Matrix Hunter';
+      else badgeTitle = 'Matrix Rookie';
+
+      resultScreen.innerHTML = `
+        <div class="text-center space-y-3 border-b border-slate-800 pb-6">
+          <span class="text-4xl">${scorePercent >= 80 ? '🏆' : (scorePercent >= 50 ? '🥈' : '🎯')}</span>
+          <h3 class="text-2xl md:text-3xl font-bold text-white">MOCK EXAM SCORE REPORT</h3>
+          <div class="inline-block px-4 py-1 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-800 font-mono text-sm font-bold">
+            ${badgeTitle}
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+            <span class="text-xs text-slate-400">คะแนนที่ได้</span>
+            <div class="text-2xl font-bold text-cyan-400 font-mono mt-1">${correctCount} / ${total}</div>
+          </div>
+          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+            <span class="text-xs text-slate-400">ความแม่นยำ</span>
+            <div class="text-2xl font-bold text-purple-400 font-mono mt-1">${scorePercent}%</div>
+          </div>
+          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+            <span class="text-xs text-slate-400">เวลาที่ใช้ทั้งหมด</span>
+            <div class="text-2xl font-bold text-amber-400 font-mono mt-1">${Math.floor(timeSpentSec/60)}:${timeSpentSec%60 < 10 ? '0' : ''}${timeSpentSec%60}</div>
+          </div>
+          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+            <span class="text-xs text-slate-400">เฉลี่ยต่อข้อ</span>
+            <div class="text-2xl font-bold text-emerald-400 font-mono mt-1">${avgSec} วินาที</div>
+          </div>
+        </div>
+
+        <div class="pt-4 flex justify-center space-x-4">
+          <button onclick="startMockExam()" class="px-6 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm shadow">
+            ทำข้อสอบใหม่อีกครั้ง
+          </button>
+          <button onclick="switchTab('practice')" class="px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-sm">
+            กลับหน้าฝึกรายข้อ
+          </button>
+        </div>
+      `;
+    }
+
+    let bossState = {
+      questions: [],
+      currentIndex: 0,
+      hp: 100
+    };
+
+    function renderBossMode() {
+      if (bossState.questions.length === 0) {
+        bossState.questions = QUESTION_BANK.filter(q => q.difficulty >= 5);
+        bossState.currentIndex = 0;
+      }
+
+      const q = bossState.questions[bossState.currentIndex];
+      const area = document.getElementById('bossQuestionArea');
+      const choiceLabels = ['A', 'B', 'C', 'D', 'E'];
+
+      let choicesHtml = '';
+      q.choices.forEach((choice, idx) => {
+        choicesHtml += `
+          <button onclick="handleBossAnswer(${idx})" class="w-full text-left p-4 rounded-2xl border border-purple-900/60 bg-slate-950/70 hover:border-purple-500 transition flex items-center space-x-3.5 text-sm md:text-base">
+            <span class="w-8 h-8 rounded-xl bg-purple-950 border border-purple-700 flex items-center justify-center font-mono font-bold text-xs text-purple-300">
+              ${choiceLabels[idx]}
+            </span>
+            <span class="font-medium text-slate-100">${renderMathContent(choice)}</span>
+          </button>
+        `;
+      });
+
+      area.innerHTML = `
+        <div class="flex items-center justify-between text-xs font-mono text-purple-300">
+          <span>BOSS STAGE: ${bossState.currentIndex + 1} / ${bossState.questions.length}</span>
+          <span>LEVEL ${q.difficulty} | ${q.sourcePattern}</span>
+        </div>
+
+        <div class="text-base md:text-lg text-white font-medium leading-relaxed bg-purple-950/20 p-5 rounded-2xl border border-purple-900/50">
+          ${renderMathContent(q.question)}
+        </div>
+
+        <div class="space-y-3">
+          ${choicesHtml}
+        </div>
+      `;
+    }
+
+    function handleBossAnswer(idx) {
+      const q = bossState.questions[bossState.currentIndex];
+      const isRight = (idx === q.answer);
+      if (isRight) {
+        playTone('correct');
+        const damage = Math.round(100 / bossState.questions.length);
+        bossState.hp = Math.max(0, bossState.hp - damage);
+        document.getElementById('bossHpBar').style.width = `${bossState.hp}%`;
+        document.getElementById('bossHpText').innerText = `${bossState.hp}%`;
+        alert('⚔️ โจมตีบอสสำเร็จ! คุณมองเห็นสมบัติที่ซ่อนอยู่และกำจัดข้อนี้ได้!');
+      } else {
+        playTone('incorrect');
+        alert('💥 บอสโจมตีสวนกลับ! คำตอบยังไม่ถูกต้อง ระวังกับดักของข้อสอบ!');
+      }
+
+      if (bossState.currentIndex < bossState.questions.length - 1) {
+        bossState.currentIndex++;
+      } else {
+        alert('🏆 ยินดีด้วย! คุณผ่านด่าน MATRIX FINAL BOSS ทั้งหมดเรียบร้อยแล้ว!');
+        bossState.currentIndex = 0;
+        bossState.hp = 100;
+      }
+      renderBossMode();
+    }
+
+    function renderBlueprint() {
+      const grid = document.getElementById('blueprintPatternsGrid');
+      let html = '';
+      const patterns = [
+        { name: "PATTERN 01: Matrix Equality & Dimension", count: 12, target: "ตรวจมิติคูณได้ m x k x k x n, เทียบสมาชิก a_ij = b_ij" },
+        { name: "PATTERN 02: Matrix Addition & Scalar", count: 10, target: "การแจกแจงสเกลาร์, ตัวผกผันการบวก (-A), เอกลักษณ์การบวก" },
+        { name: "PATTERN 03: Multiplication & Powers", count: 12, target: "แถว x หลัก, กำลังของเมทริกซ์, การไม่มีสมบัติสลับที่ AB ≠ BA" },
+        { name: "PATTERN 04: Transpose & Symmetry", count: 10, target: "(AB)ᵀ = Bᵀ Aᵀ สลับหน้าหลัง, เมทริกซ์สมมาตรและปฏิสมมาตร" },
+        { name: "PATTERN 05: Determinant 2x2 & 3x3", count: 12, target: "คูณลงลบคูณขึ้น, กฎซาร์รัส, การกระจายโคแฟกเตอร์แถว/หลักที่มีศูนย์" },
+        { name: "PATTERN 06: Det Properties & kA", count: 15, target: "det(kA) = kⁿ det(A), det(AB) = det(A)det(B), det(Aᵀ)=det(A)" },
+        { name: "PATTERN 07: Row Operations on Det", count: 10, target: "สลับแถวติดลบ, คูณสเกลาร์แถวเดียว, บวกพหุคูณแถว det คงเดิม" },
+        { name: "PATTERN 08: Inverse 2x2 & Singular", count: 10, target: "สูตรลัด 2x2, เงื่อนไขไม่มีอินเวิร์ส det=0, (AB)⁻¹ = B⁻¹A⁻¹" },
+        { name: "PATTERN 09: Adjoint Properties", count: 10, target: "A · adj(A) = det(A)I, det(adj(A)) = (det A)ⁿ⁻¹" },
+        { name: "PATTERN 10: Linear Systems & Cramer", count: 9, target: "เขียน AX = B, กฎของคราเมอร์ x_i = det(A_i)/det(A)" }
+      ];
+
+      patterns.forEach(p => {
+        html += `
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-cyan-400">${p.name}</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono">${p.count} ข้อ</span>
+            </div>
+            <p class="text-slate-400 text-[11px] leading-relaxed">${p.target}</p>
+          </div>
+        `;
+      });
+      grid.innerHTML = html;
+    }
+
+    function openFormulaVault() {
+      document.getElementById('formulaVaultModal').classList.remove('hidden');
+      filterVault();
+      playTone('click');
+    }
+
+    function closeFormulaVault() {
+      document.getElementById('formulaVaultModal').classList.add('hidden');
+    }
+
+    function filterVault() {
+      const query = document.getElementById('vaultSearch').value.toLowerCase();
+      const container = document.getElementById('vaultCardsContainer');
+      const filtered = FORMULA_VAULT.filter(f => {
+        return f.title.toLowerCase().includes(query) || f.formula.toLowerCase().includes(query) || f.whenToUse.toLowerCase().includes(query);
+      });
+
+      let html = '';
+      filtered.forEach(f => {
+        html += `
+          <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+              <h4 class="font-bold text-sm text-cyan-300">${f.title}</h4>
+              <span class="text-xs font-mono text-slate-400">${renderMathContent(f.formula)}</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800/80">
+                <strong class="text-emerald-400 flex items-center space-x-1"><span>🎯</span><span>ใช้ตอนไหน:</span></strong>
+                <p class="text-slate-300 mt-1">${f.whenToUse}</p>
+              </div>
+              <div class="bg-slate-900/80 p-3 rounded-xl border border-cyan-950">
+                <strong class="text-cyan-400 flex items-center space-x-1"><span>⚡</span><span>วิธีลัด (Shortcut):</span></strong>
+                <p class="text-slate-300 mt-1">${f.shortcutPower}</p>
+              </div>
+              <div class="bg-slate-900/80 p-3 rounded-xl border border-rose-950">
+                <strong class="text-rose-400 flex items-center space-x-1"><span>⚠️</span><span>กับดักข้อสอบ (Trap):</span></strong>
+                <p class="text-slate-300 mt-1">${f.examTrap}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      applyFilters();
+    });
+  </script>
+</body>
+</html>
